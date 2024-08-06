@@ -1,10 +1,14 @@
 package org.example.ted.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User {
@@ -18,80 +22,57 @@ public class User {
     @Column(name = "surname", length = 45)
     private String surname;
 
+    @Column(name = "password", nullable = false, length = 1024)
+    private String password;
+
+    @Column(name = "photo_path", length = 60)
+    private String photoPath;
+
     @Column(name = "phone_number", length = 45)
     private String phoneNumber;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Advertisement> advertisements = new LinkedHashSet<>();
 
-    @Column(name = "photo_path")
-    private String photoPath;
+    @ManyToMany(mappedBy = "request_users")
+    private Set<Advertisement> advertisement_requests = new LinkedHashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user", referencedColumnName = "email"),
-        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles = new ArrayList<>();
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Article> articles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Comment> comments = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user1")
+    private Set<Connection> connection1 = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user2")
+    private Set<Connection> connection2 = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Like> likes = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Notification> notification1 = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "friend")
+    private Set<Notification> notification2 = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Profile> profiles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Request> request1 = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "toUser")
+    private Set<Request> request2 = new LinkedHashSet<>();
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Role> roles = new LinkedHashSet<>();
 
     public User() {}
-
     public User(String email, String password) {
         this.email = email;
         this.password = password;
-    }
-
-    public String getPhotoPath() {
-        return photoPath;
-    }
-
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
     }
 }

@@ -22,7 +22,7 @@ public class Comment {
     @JoinColumn(name = "createdBy", nullable = false)
     private User createdBy;
 
-    @Column(name = "text", nullable = false, columnDefinition = "text")
+    @Column(name = "text", nullable = false, columnDefinition = "TEXT")
     private String text;
 
 }

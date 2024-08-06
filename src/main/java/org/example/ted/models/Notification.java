@@ -15,18 +15,14 @@ public class Notification {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_email", nullable = false)
-    private User userEmail;
+    @JoinColumn(name = "user", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "friend_email", nullable = false)
-    private User friendEmail;
+    @JoinColumn(name = "friend", nullable = false)
+    private User friend;
 
     @Column(name = "type", nullable = false, length = 45)
     private String type;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user", nullable = false)
-    private User user;
 
 }

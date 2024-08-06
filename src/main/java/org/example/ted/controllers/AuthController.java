@@ -1,9 +1,9 @@
 package org.example.ted.controllers;
 
-import org.example.ted.models.Role;
 import org.example.ted.dto.AuthResponseDto;
 import org.example.ted.dto.LoginDto;
 import org.example.ted.dto.RegisterDto;
+import org.example.ted.models.Role;
 import org.example.ted.models.User;
 import org.example.ted.repositories.RoleRepository;
 import org.example.ted.repositories.UserRepository;
@@ -59,7 +59,8 @@ public class AuthController {
         User user = new User(registerDto.getEmail(), passwordEncoder.encode(registerDto.getPassword()));
 
         Role roles = roleRepository.findByName("USER").get();
-        user.setRoles(Collections.singletonList(roles));
+//        user.setRoles(Collections.singletonList(roles));
+        user.setRoles(Collections.singleton(roles));
 
         userRepository.save(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);

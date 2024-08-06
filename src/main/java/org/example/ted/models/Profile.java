@@ -18,16 +18,16 @@ public class Profile {
     @JoinColumn(name = "createdBy", nullable = false)
     private User createdBy;
 
-    @Column(name = "experience", columnDefinition = "text")
+    @Column(name = "experience", columnDefinition = "TEXT")
     private String experience;
 
-    @Column(name = "education", columnDefinition = "text")
+    @Column(name = "education", columnDefinition = "TEXT")
     private String education;
 
-    @Column(name = "skills", columnDefinition = "text")
+    @Column(name = "skills", columnDefinition = "TEXT")
     private String skills;
 
-    @Column(name = "cv", columnDefinition = "text")
+    @Column(name = "cv", columnDefinition = "TEXT")
     private String cv;
 
 }

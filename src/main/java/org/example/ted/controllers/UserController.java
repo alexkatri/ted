@@ -1,7 +1,7 @@
 package org.example.ted.controllers;
 
-import org.example.ted.models.User;
 import org.example.ted.exceptions.UserNotFoundException;
+import org.example.ted.models.User;
 import org.example.ted.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 

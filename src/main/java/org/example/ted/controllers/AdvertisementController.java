@@ -44,7 +44,7 @@ public class AdvertisementController {
         return repository.findById(id)
                 .map(advertisement -> {
                     advertisement.setCreatedBy(newAdvertisement.getCreatedBy());
-                    advertisement.setRequestUsers(newAdvertisement.getRequestUsers());
+                    advertisement.setRequest_users(newAdvertisement.getRequest_users());
                     advertisement.setText(newAdvertisement.getText());
                     return repository.save(advertisement);
                 })

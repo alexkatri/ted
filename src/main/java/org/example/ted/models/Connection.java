@@ -15,15 +15,11 @@ public class Connection {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_email", nullable = false)
-    private User userEmail;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "friend_email", nullable = false)
-    private User friendEmail;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user1", nullable = false)
     private User user1;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user2", nullable = false)
+    private User user2;
 
 }
