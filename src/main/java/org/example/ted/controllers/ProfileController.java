@@ -58,7 +58,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("{id}")
-    void deleteAdvertisement(@PathVariable long id) {
+    void deleteProfile(@PathVariable long id) {
         repository.deleteById(id);
     }
 }

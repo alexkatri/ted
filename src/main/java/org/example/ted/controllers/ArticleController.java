@@ -40,7 +40,7 @@ public class ArticleController {
 
 
     @PutMapping("{id}")
-    Article replaceAdvertisement(@RequestBody Article newArticle, @PathVariable long id) {
+    Article replaceArticle(@RequestBody Article newArticle, @PathVariable long id) {
 
         return repository.findById(id)
                 .map(article -> {
@@ -57,7 +57,7 @@ public class ArticleController {
     }
 
     @DeleteMapping("{id}")
-    void deleteAdvertisement(@PathVariable long id) {
+    void deleteArticle(@PathVariable long id) {
         repository.deleteById(id);
     }
 }
