@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/ted/auth")
@@ -52,17 +53,21 @@ public class AuthController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<User> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
         if(userRepository.existsByEmail(registerDto.getEmail())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("email already in use", HttpStatus.BAD_REQUEST);
         }
-        User user = new User(registerDto.getEmail(), passwordEncoder.encode(registerDto.getPassword()));
+        if(!Objects.equals(registerDto.getPassword(), registerDto.getConfirmPassword())) {
+            return new ResponseEntity<>("password confirmation error", HttpStatus.BAD_REQUEST);
+        }
+        User user = new User(registerDto.getEmail(), passwordEncoder.encode(registerDto.getPassword()),
+                registerDto.getName(), registerDto.getSurname(), registerDto.getPhone());
 
         Role roles = roleRepository.findByName("USER").get();
 //        user.setRoles(Collections.singletonList(roles));
         user.setRoles(Collections.singleton(roles));
 
         userRepository.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);
     }
 }
