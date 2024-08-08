@@ -15,7 +15,7 @@ public class Profile {
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "createdBy", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
     @Column(name = "experience", columnDefinition = "TEXT")

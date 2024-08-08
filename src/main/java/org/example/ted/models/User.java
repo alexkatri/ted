@@ -28,17 +28,8 @@ public class User {
     @Column(name = "phone_number", length = 45)
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "createdBy")
-    private Set<Advertisement> advertisements = new LinkedHashSet<>();
-
     @ManyToMany(mappedBy = "request_users")
     private Set<Advertisement> advertisement_requests = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "createdBy")
-    private Set<Article> articles = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "createdBy")
-    private Set<Comment> comments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user1")
     private Set<Connection> connection1 = new LinkedHashSet<>();
@@ -46,20 +37,11 @@ public class User {
     @OneToMany(mappedBy = "user2")
     private Set<Connection> connection2 = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "createdBy")
-    private Set<Like> likes = new LinkedHashSet<>();
-
     @OneToMany(mappedBy = "user")
     private Set<Notification> notification1 = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "friend")
     private Set<Notification> notification2 = new LinkedHashSet<>();
-
-    @OneToOne(mappedBy = "createdBy")
-    private Profile profile;
-
-    @OneToMany(mappedBy = "createdBy")
-    private Set<Request> request1 = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "toUser")
     private Set<Request> request2 = new LinkedHashSet<>();
@@ -69,6 +51,24 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private Image image;
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Advertisement> advertisements = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Article> articles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Comment> comments = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Like> likes = new LinkedHashSet<>();
+
+    @OneToOne(mappedBy = "createdBy")
+    private Profile profile;
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Request> requests = new LinkedHashSet<>();
 
     public User() {}
     public User(String email, String password) {

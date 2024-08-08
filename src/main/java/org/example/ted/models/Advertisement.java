@@ -18,7 +18,7 @@ public class Advertisement {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "createdBy", nullable = false)
+    @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
     @Column(name = "text", nullable = false, columnDefinition = "TEXT")
