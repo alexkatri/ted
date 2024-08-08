@@ -48,7 +48,6 @@ public class UserController {
                     user.setName(newUser.getName());
                     user.setPhoneNumber(newUser.getPhoneNumber());
                     user.setPassword(newUser.getPassword());
-                    user.setPhotoPath(newUser.getPhotoPath());
                     user.setRoles(newUser.getRoles());
                     return repository.save(user);
                 })

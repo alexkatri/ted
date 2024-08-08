@@ -25,9 +25,6 @@ public class User {
     @Column(name = "password", nullable = false, length = 1024)
     private String password;
 
-    @Column(name = "photo_path", length = 60)
-    private String photoPath;
-
     @Column(name = "phone_number", length = 45)
     private String phoneNumber;
 
@@ -58,8 +55,8 @@ public class User {
     @OneToMany(mappedBy = "friend")
     private Set<Notification> notification2 = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "createdBy")
-    private Set<Profile> profiles = new LinkedHashSet<>();
+    @OneToOne(mappedBy = "createdBy")
+    private Profile profile;
 
     @OneToMany(mappedBy = "createdBy")
     private Set<Request> request1 = new LinkedHashSet<>();
@@ -69,6 +66,9 @@ public class User {
 
     @ManyToMany(mappedBy = "users")
     private Set<Role> roles = new LinkedHashSet<>();
+
+    @OneToOne(mappedBy = "user")
+    private Image image;
 
     public User() {}
     public User(String email, String password) {
