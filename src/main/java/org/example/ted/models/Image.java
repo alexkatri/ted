@@ -1,5 +1,6 @@
 package org.example.ted.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class Image {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "user", nullable = false)
+    @JsonIgnoreProperties("image")
     private User user;
 
     public Image(String path) {

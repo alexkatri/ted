@@ -1,10 +1,14 @@
 package org.example.ted.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -20,10 +24,12 @@ public class Article {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "created_by", nullable = false)
+    @JsonIgnoreProperties("articles")
     private User createdBy;
 
     @Column(name = "date", nullable = false)
-    private Instant date;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private Date date;
 
     @Column(name = "views", nullable = false)
     private Integer views;

@@ -51,6 +51,9 @@ public class WebSecurity {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/ted/auth/**").permitAll()
+                .requestMatchers("/images/**").permitAll()
+                .requestMatchers("/articles/**").permitAll()
+                .requestMatchers("/advertisements/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 // this disables session creation on Spring Security

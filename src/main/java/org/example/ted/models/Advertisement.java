@@ -1,5 +1,6 @@
 package org.example.ted.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class Advertisement {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "created_by", nullable = false)
+    @JsonIgnoreProperties("adverisements")
     private User createdBy;
 
     @Column(name = "text", nullable = false, columnDefinition = "TEXT")

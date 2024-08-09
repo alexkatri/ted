@@ -1,5 +1,6 @@
 package org.example.ted.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class Profile {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "created_by", nullable = false)
+    @JsonIgnoreProperties("profile")
     private User createdBy;
 
     @Column(name = "experience", columnDefinition = "TEXT")

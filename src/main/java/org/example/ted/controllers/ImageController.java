@@ -2,6 +2,7 @@ package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ImageNotFoundException;
 import org.example.ted.models.Image;
+import org.example.ted.models.User;
 import org.example.ted.repositories.ImageRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.util.Random;
 
 @RestController
 @RequestMapping("/images")
+public
 class ImageController {
 
     //Save the uploaded file to this folder
@@ -27,7 +29,28 @@ class ImageController {
         this.repository = repository;
     }
 
-    // Aggregate root
+    @GetMapping("uploadStatus")
+    public String uploadStatus() {
+        return "uploadStatus";
+    }
+
+    @GetMapping
+    List<Image> all() {
+        return repository.findAll();
+    }
+
+    @GetMapping("{id}")
+    Image one(@PathVariable Long id) {
+
+        return repository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException(id));
+    }
+
+    @GetMapping("/user/{user_email}")
+    Image user(@PathVariable(value = "user_email") User user_email) {
+
+        return repository.findByUser(user_email);
+    }
 
     @PostMapping("upload")
     public String singleFileUpload(@RequestParam("picture") MultipartFile file,
@@ -62,33 +85,13 @@ class ImageController {
         return "redirect:/images/uploadStatus";
     }
 
-    @GetMapping("uploadStatus")
-    public String uploadStatus() {
-        return "uploadStatus";
+    @PostMapping
+    Image newImage(@RequestBody Image newImage) {
+        return repository.save(newImage);
     }
-
-    @GetMapping
-    List<Image> all() {
-        return repository.findAll();
-    }
-
-//    @PostMapping
-//    Image newImage(@RequestBody Image newImage) {
-//        return repository.save(newImage);
-//    }
-
-    // Single item
-
-    @GetMapping("{id}")
-    Image one(@PathVariable Long id) {
-
-        return repository.findById(id)
-                .orElseThrow(() -> new ImageNotFoundException(id));
-    }
-
 
     @PutMapping("{id}")
-    Image replaceImage(@RequestBody Image newImage, @PathVariable long id) {
+    Image replaceImage(@RequestBody Image newImage, @PathVariable Long id) {
 
         return repository.findById(id)
                 .map(Image -> {
@@ -96,23 +99,9 @@ class ImageController {
                     return repository.save(Image);
                 })
                 .orElseGet(() -> {
-                    newImage.setId((int) id);
+                    newImage.setId(Math.toIntExact(id));
                     return repository.save(newImage);
                 });
-    }
-
-    @GetMapping("{user_email}")
-    Image one(@PathVariable String user_email) {
-
-        return repository.findByUserEmail(user_email);
-    }
-
-    @PutMapping("{user_email}")
-    Image replaceImage(@RequestBody Image newImage, @PathVariable String user_email) {
-
-        Image image = repository.findByUserEmail(user_email);
-        image.setPath(newImage.getPath());
-        return repository.save(image);
     }
 
     @DeleteMapping("{id}")

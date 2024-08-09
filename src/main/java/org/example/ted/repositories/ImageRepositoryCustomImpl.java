@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -18,7 +19,7 @@ public class ImageRepositoryCustomImpl implements ImageRepositoryCustom {
     EntityManager entityManager;
 
     @Override
-    public Image findByUserEmail(String user_email) {
+    public Image findByUser(User user_email) {
         Image image = null;
         Query query = entityManager.createQuery("SELECT i FROM Image i WHERE i.user = ?1");
         query.setParameter(1, user_email);

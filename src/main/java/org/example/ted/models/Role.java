@@ -1,5 +1,6 @@
 package org.example.ted.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Role {
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "user"))
+    @JsonIgnoreProperties("roles")
     private Set<User> users = new LinkedHashSet<>();
 
 }

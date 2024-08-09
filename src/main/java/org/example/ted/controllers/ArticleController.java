@@ -1,11 +1,12 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ArticleNotFoundException;
-import org.example.ted.models.Article;
+import org.example.ted.models.*;
 import org.example.ted.repositories.ArticleRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/articles")
@@ -36,6 +37,26 @@ public class ArticleController {
 
         return repository.findById(id)
                 .orElseThrow(() -> new ArticleNotFoundException(id));
+    }
+
+    @GetMapping("/user/{user_email}")
+    List<Article> user(@PathVariable(value = "user_email") User user_email) {
+
+        return repository.findByUser(user_email);
+    }
+
+    @GetMapping("{id}/likes")
+    Set<Like> articleLikes(@PathVariable long id) {
+
+        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        return article.getLikes();
+    }
+
+    @GetMapping("{id}/comments")
+    Set<Comment> articleComments(@PathVariable long id) {
+
+        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        return article.getComments();
     }
 
 
