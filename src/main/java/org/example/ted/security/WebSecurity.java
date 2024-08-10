@@ -54,6 +54,7 @@ public class WebSecurity {
                 .requestMatchers("/images/**").permitAll()
                 .requestMatchers("/articles/**").permitAll()
                 .requestMatchers("/advertisements/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 // this disables session creation on Spring Security

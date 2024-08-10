@@ -20,7 +20,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     @Override
     public List<Article> findByUser(User user_email) {
-//        List<Article> articles = null;
         Query query = entityManager.createQuery("SELECT a FROM Article a WHERE a.createdBy = ?1");
         query.setParameter(1, user_email);
         List<Article> articles = query.getResultList();

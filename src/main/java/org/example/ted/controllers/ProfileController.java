@@ -1,7 +1,9 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ProfileNotFoundException;
+import org.example.ted.models.Image;
 import org.example.ted.models.Profile;
+import org.example.ted.models.User;
 import org.example.ted.repositories.ProfileRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +38,11 @@ public class ProfileController {
 
         return repository.findById(id)
                 .orElseThrow(() -> new ProfileNotFoundException(id));
+    }
+
+    @GetMapping("/user/{created_by}")
+    Profile getByUser(@PathVariable(value = "created_by") User created_by) {
+        return repository.findByUser(created_by);
     }
 
 

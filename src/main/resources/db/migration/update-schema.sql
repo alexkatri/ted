@@ -172,7 +172,7 @@ COLUMN friend;
 
 ALTER TABLE ted.connection
 DROP
-COLUMN user2;
+COLUMN connection_user;
 
 ALTER TABLE article
     MODIFY multimedia_path VARCHAR (255);

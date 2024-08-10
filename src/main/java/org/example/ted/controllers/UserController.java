@@ -44,17 +44,19 @@ public class UserController {
 
         return repository.findByEmail(user_email)
                 .map(user -> {
-                    user.setSurname(newUser.getSurname());
-                    user.setName(newUser.getName());
-                    user.setPhoneNumber(newUser.getPhoneNumber());
+                    user.setEmail(newUser.getEmail());
                     user.setPassword(newUser.getPassword());
+                    user.setName(newUser.getName());
+                    user.setSurname(newUser.getSurname());
+                    user.setPhoneNumber(newUser.getPhoneNumber());
                     user.setRoles(newUser.getRoles());
                     return repository.save(user);
                 })
-                .orElseGet(() -> {
-                    newUser.setEmail(user_email);
-                    return repository.save(newUser);
-                });
+                .orElseThrow(() -> new UserNotFoundException(user_email));
+//                .orElseGet(() -> {
+//                    newUser.setEmail(user_email);
+//                    return repository.save(newUser);
+//                });
     }
 
     @DeleteMapping("{user_email}")

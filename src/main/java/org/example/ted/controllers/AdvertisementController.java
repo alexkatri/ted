@@ -2,6 +2,8 @@ package org.example.ted.controllers;
 
 import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.models.Advertisement;
+import org.example.ted.models.Article;
+import org.example.ted.models.User;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +38,11 @@ public class AdvertisementController {
 
         return repository.findById(id)
                 .orElseThrow(() -> new AdvertisementNotFoundException(id));
+    }
+
+    @GetMapping("/user/{created_by}")
+    List<Advertisement> gatAllByUser(@PathVariable(value = "created_by") User createdBy) {
+        return repository.findByUser(createdBy);
     }
 
 

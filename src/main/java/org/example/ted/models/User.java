@@ -17,14 +17,14 @@ public class User {
     @Column(name = "email", nullable = false, length = 60)
     private String email;
 
+    @Column(name = "password", nullable = false, length = 1024)
+    private String password;
+
     @Column(name = "name", length = 45)
     private String name;
 
     @Column(name = "surname", length = 45)
     private String surname;
-
-    @Column(name = "password", nullable = false, length = 1024)
-    private String password;
 
     @Column(name = "phone_number", length = 45)
     private String phoneNumber;
@@ -33,13 +33,13 @@ public class User {
     @JsonIgnoreProperties("request_users")
     private Set<Advertisement> advertisement_requests = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user1")
-    @JsonIgnoreProperties("user1")
-    private Set<Connection> connection1 = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private Set<Connection> connect = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user2")
-    @JsonIgnoreProperties("user2")
-    private Set<Connection> connection2 = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "connection_user")
+    @JsonIgnoreProperties("connection_user")
+    private Set<Connection> connected = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties("user")

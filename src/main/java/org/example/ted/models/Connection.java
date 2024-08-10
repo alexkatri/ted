@@ -16,13 +16,13 @@ public class Connection {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user1", nullable = false)
-    @JsonIgnoreProperties("connection1")
-    private User user1;
+    @JoinColumn(name = "user", nullable = false)
+    @JsonIgnoreProperties("connect")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user2", nullable = false)
-    @JsonIgnoreProperties("connection2")
-    private User user2;
+    @JoinColumn(name = "connection_user", nullable = false)
+    @JsonIgnoreProperties("connected")
+    private User connection_user;
 
 }

@@ -1,6 +1,8 @@
 package org.example.ted.controllers;
 
+import org.example.ted.exceptions.ProfileNotFoundException;
 import org.example.ted.models.Notification;
+import org.example.ted.models.User;
 import org.example.ted.repositories.NotificationRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,12 +33,16 @@ public class NotificationController {
     // Single item
 
 //    @GetMapping("{id}")
-//    Profile one(@PathVariable long id) {
+//    Notification one(@PathVariable long id) {
 //
-//        return repository.findById(id)
+//        return repository.findById(id);
 //                .orElseThrow(() -> new ProfileNotFoundException(id));
 //    }
 
+    @GetMapping("/user/{user}")
+    List<Notification> getAllByUser(@PathVariable(value = "user") User user) {
+        return repository.findByUser(user);
+    }
 
 //    @PutMapping("{id}")
 //    Comment replaceComment(@RequestBody Comment newProfile, @PathVariable long id) {

@@ -22,7 +22,7 @@ public class ArticleController {
 
     @GetMapping
     List<Article> all() {
-        return repository.findAll();
+        return repository.findAll().stream().sorted().toList();
     }
 
     @PostMapping
@@ -40,20 +40,20 @@ public class ArticleController {
     }
 
     @GetMapping("/user/{user_email}")
-    List<Article> user(@PathVariable(value = "user_email") User user_email) {
+    List<Article> getAllByUser(@PathVariable(value = "user_email") User user_email) {
 
         return repository.findByUser(user_email);
     }
 
     @GetMapping("{id}/likes")
-    Set<Like> articleLikes(@PathVariable long id) {
+    Set<Like> getLikes(@PathVariable long id) {
 
         Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
         return article.getLikes();
     }
 
     @GetMapping("{id}/comments")
-    Set<Comment> articleComments(@PathVariable long id) {
+    Set<Comment> getComments(@PathVariable long id) {
 
         Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
         return article.getComments();
