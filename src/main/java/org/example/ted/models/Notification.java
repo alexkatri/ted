@@ -16,14 +16,14 @@ public class Notification {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user", nullable = false)
-    @JsonIgnoreProperties("notification1")
-    private User user;
+    @JoinColumn(name = "receiver", nullable = false)
+    @JsonIgnoreProperties("received_notification")
+    private User receiver;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "friend", nullable = false)
-    @JsonIgnoreProperties("notification1")
-    private User friend;
+    @JoinColumn(name = "sender", nullable = false)
+    @JsonIgnoreProperties("sent_notification")
+    private User sender;
 
     @Column(name = "type", nullable = false, length = 45)
     private String type;

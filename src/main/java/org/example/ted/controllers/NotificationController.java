@@ -24,9 +24,9 @@ public class NotificationController {
         return repository.findAll();
     }
 
-    @GetMapping("/user/{user}")
-    List<Notification> allByUser(@PathVariable(value = "user") User user) {
-        return repository.findByUser(user);
+    @GetMapping("/user/{receiver}")
+    List<Notification> allByReceiver(@PathVariable(value = "receiver") User receiver) {
+        return repository.findByReceiver(receiver);
     }
 
     @PostMapping

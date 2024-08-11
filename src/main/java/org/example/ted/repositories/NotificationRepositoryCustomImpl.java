@@ -18,9 +18,9 @@ public class NotificationRepositoryCustomImpl implements NotificationRepositoryC
     EntityManager entityManager;
 
     @Override
-    public List<Notification> findByUser(User user) {
-        Query query = entityManager.createQuery("SELECT n FROM Notification n WHERE n.user = ?1");
-        query.setParameter(1, user);
+    public List<Notification> findByReceiver(User receiver) {
+        Query query = entityManager.createQuery("SELECT n FROM Notification n WHERE n.receiver = ?1");
+        query.setParameter(1, receiver);
         List<Notification> notifications = query.getResultList();
         return notifications;
     }

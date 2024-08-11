@@ -41,13 +41,13 @@ public class User {
     @JsonIgnoreProperties("connection_user")
     private Set<Connection> connected = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnoreProperties("user")
-    private Set<Notification> notification1 = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "receiver")
+    @JsonIgnoreProperties("receiver")
+    private Set<Notification> received_notification = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "friend")
-    @JsonIgnoreProperties("friend")
-    private Set<Notification> notification2 = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "sender")
+    @JsonIgnoreProperties("sender")
+    private Set<Notification> sent_notification = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "createdBy")
     @JsonIgnoreProperties("createdBy")
