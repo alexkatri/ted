@@ -1,9 +1,8 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.RequestNotFoundException;
-import org.example.ted.models.Comment;
 import org.example.ted.models.Request;
-import org.example.ted.repositories.CommentRepository;
+import org.example.ted.models.User;
 import org.example.ted.repositories.RequestRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +37,11 @@ public class RequestController {
 
         return repository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException(id));
+    }
+
+    @GetMapping("/user/{receiver}")
+    List<Request> allByReceiver(@PathVariable(value = "receiver") User receiver) {
+        return repository.findByReceiver(receiver);
     }
 
 

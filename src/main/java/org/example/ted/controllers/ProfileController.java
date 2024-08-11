@@ -1,7 +1,6 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ProfileNotFoundException;
-import org.example.ted.models.Image;
 import org.example.ted.models.Profile;
 import org.example.ted.models.User;
 import org.example.ted.repositories.ProfileRepository;
@@ -41,7 +40,7 @@ public class ProfileController {
     }
 
     @GetMapping("/user/{created_by}")
-    Profile getByUser(@PathVariable(value = "created_by") User created_by) {
+    Profile byUser(@PathVariable(value = "created_by") User created_by) {
         return repository.findByUser(created_by);
     }
 

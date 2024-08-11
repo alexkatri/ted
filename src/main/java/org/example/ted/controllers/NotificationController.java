@@ -1,6 +1,5 @@
 package org.example.ted.controllers;
 
-import org.example.ted.exceptions.ProfileNotFoundException;
 import org.example.ted.models.Notification;
 import org.example.ted.models.User;
 import org.example.ted.repositories.NotificationRepository;
@@ -25,6 +24,11 @@ public class NotificationController {
         return repository.findAll();
     }
 
+    @GetMapping("/user/{user}")
+    List<Notification> allByUser(@PathVariable(value = "user") User user) {
+        return repository.findByUser(user);
+    }
+
     @PostMapping
     Notification newNotification(@RequestBody Notification newNotification) {
         return repository.save(newNotification);
@@ -38,11 +42,6 @@ public class NotificationController {
 //        return repository.findById(id);
 //                .orElseThrow(() -> new ProfileNotFoundException(id));
 //    }
-
-    @GetMapping("/user/{user}")
-    List<Notification> getAllByUser(@PathVariable(value = "user") User user) {
-        return repository.findByUser(user);
-    }
 
 //    @PutMapping("{id}")
 //    Comment replaceComment(@RequestBody Comment newProfile, @PathVariable long id) {

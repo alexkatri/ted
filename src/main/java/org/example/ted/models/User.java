@@ -49,9 +49,17 @@ public class User {
     @JsonIgnoreProperties("friend")
     private Set<Notification> notification2 = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "toUser")
-    @JsonIgnoreProperties("toUser")
-    private Set<Request> request2 = new LinkedHashSet<>();
+    @OneToOne(mappedBy = "createdBy")
+    @JsonIgnoreProperties("createdBy")
+    private Profile profile;
+
+    @OneToMany(mappedBy = "sender")
+    @JsonIgnoreProperties("sender")
+    private Set<Request> sent_requests = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "receiver")
+    @JsonIgnoreProperties("receiver")
+    private Set<Request> received_requests = new LinkedHashSet<>();
 
     @ManyToMany(mappedBy = "users")
     @JsonIgnoreProperties("users")
@@ -76,14 +84,6 @@ public class User {
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties("createdBy")
     private Set<Like> likes = new LinkedHashSet<>();
-
-    @OneToOne(mappedBy = "createdBy")
-    @JsonIgnoreProperties("createdBy")
-    private Profile profile;
-
-    @OneToMany(mappedBy = "createdBy")
-    @JsonIgnoreProperties("createdBy")
-    private Set<Request> requests = new LinkedHashSet<>();
 
     public User() {}
     public User(String email, String password) {

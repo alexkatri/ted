@@ -2,10 +2,8 @@ package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ConnectionNotFoundException;
 import org.example.ted.models.Connection;
-import org.example.ted.models.Notification;
 import org.example.ted.models.User;
 import org.example.ted.repositories.ConnectionRepository;
-import org.example.ted.repositories.NotificationRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +25,11 @@ public class ConnectionController {
         return repository.findAll();
     }
 
+    @GetMapping("/user/{user}")
+    List<User> allByUser(@PathVariable(value = "user") User user) {
+        return repository.findByUser(user);
+    }
+
     @PostMapping
     Connection newConnection(@RequestBody Connection newConnection) {
         return repository.save(newConnection);
@@ -39,11 +42,6 @@ public class ConnectionController {
 
         return repository.findById(id)
                 .orElseThrow(() -> new ConnectionNotFoundException(id));
-    }
-
-    @GetMapping("/user/{user}")
-    List<User> getAllByUser(@PathVariable(value = "user") User user) {
-        return repository.findByUser(user);
     }
 
 //    @PutMapping("{id}")

@@ -47,8 +47,7 @@ class ImageController {
     }
 
     @GetMapping("/user/{user_email}")
-    Image user(@PathVariable(value = "user_email") User user_email) {
-
+    Image byUser(@PathVariable(value = "user_email") User user_email) {
         return repository.findByUser(user_email);
     }
 

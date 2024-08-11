@@ -25,6 +25,11 @@ public class ArticleController {
         return repository.findAll().stream().sorted().toList();
     }
 
+    @GetMapping("/user/{user_email}")
+    List<Article> allByUser(@PathVariable(value = "user_email") User user_email) {
+        return repository.findByUser(user_email);
+    }
+
     @PostMapping
     Article newArticle(@RequestBody Article newArticle) {
         return repository.save(newArticle);
@@ -37,12 +42,6 @@ public class ArticleController {
 
         return repository.findById(id)
                 .orElseThrow(() -> new ArticleNotFoundException(id));
-    }
-
-    @GetMapping("/user/{user_email}")
-    List<Article> getAllByUser(@PathVariable(value = "user_email") User user_email) {
-
-        return repository.findByUser(user_email);
     }
 
     @GetMapping("{id}/likes")

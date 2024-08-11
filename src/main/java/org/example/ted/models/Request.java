@@ -16,12 +16,13 @@ public class Request {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "created_by", nullable = false)
-    @JsonIgnoreProperties("requests")
-    private User createdBy;
+    @JoinColumn(name = "sender", nullable = false)
+    @JsonIgnoreProperties("sent_requests")
+    private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "to_user", nullable = false)
-    private User toUser;
+    @JoinColumn(name = "receiver", nullable = false)
+    @JsonIgnoreProperties("received_requests")
+    private User receiver;
 
 }
