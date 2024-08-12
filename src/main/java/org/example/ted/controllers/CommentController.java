@@ -1,6 +1,8 @@
 package org.example.ted.controllers;
 
+import org.example.ted.exceptions.CommentNotFoundException;
 import org.example.ted.models.Comment;
+import org.example.ted.models.User;
 import org.example.ted.repositories.CommentRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,11 @@ public class CommentController {
         return repository.findAll();
     }
 
+    @GetMapping("/user/{created_by}")
+    List<Comment> allByUser(@PathVariable(value = "created_by") User createdBy) {
+        return repository.findByUser(createdBy);
+    }
+
     @PostMapping
     Comment newComment(@RequestBody Comment newComment) {
         return repository.save(newComment);
@@ -30,31 +37,29 @@ public class CommentController {
 
     // Single item
 
-//    @GetMapping("{id}")
-//    Profile one(@PathVariable long id) {
-//
-//        return repository.findById(id)
-//                .orElseThrow(() -> new ProfileNotFoundException(id));
-//    }
+    @GetMapping("{id}")
+    Comment one(@PathVariable long id) {
+
+        return repository.findById(id)
+                .orElseThrow(() -> new CommentNotFoundException(id));
+    }
 
 
-//    @PutMapping("{id}")
-//    Comment replaceComment(@RequestBody Comment newProfile, @PathVariable long id) {
-//
-//        return repository.findById(id)
-//                .map(profile -> {
-//                    profile.setCreatedBy(newProfile.getCreatedBy());
-//                    profile.setCv(newProfile.getCv());
-//                    profile.setExperience(newProfile.getExperience());
-//                    profile.setEducation(newProfile.getEducation());
-//                    profile.setSkills(newProfile.getSkills());
-//                    return repository.save(profile);
-//                })
-//                .orElseGet(() -> {
-//                    newProfile.setId((int) id);
-//                    return repository.save(newProfile);
-//                });
-//    }
+    @PutMapping("{id}")
+    Comment replaceComment(@RequestBody Comment newComment, @PathVariable long id) {
+
+        return repository.findById(id)
+                .map(comment -> {
+                    comment.setCreatedBy(newComment.getCreatedBy());
+                    comment.setArticle(newComment.getArticle());
+                    comment.setText(newComment.getText());
+                    return repository.save(comment);
+                })
+                .orElseGet(() -> {
+                    newComment.setId((int) id);
+                    return repository.save(newComment);
+                });
+    }
 
     @DeleteMapping("{id}")
     void deleteComment(@PathVariable long id) {

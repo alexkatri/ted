@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -21,6 +20,20 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     @Override
     public List<Article> findByUser(User user_email) {
         Query query = entityManager.createQuery("SELECT a FROM Article a WHERE a.createdBy = ?1");
+        query.setParameter(1, user_email);
+        List<Article> articles = query.getResultList();
+        return articles;
+    }
+
+    @Override
+    public List<Article> userFeed(User user_email) {
+        Query query = entityManager.createQuery("SELECT a FROM Article a, Connection con, Comment com, Like l " +
+                "WHERE a.createdBy = ?1" +
+//                "con.user = ?1 " +
+                "" +
+                "" +
+                "" +
+                "OR con.connection_user = ?1 AND a.createdBy = ?1 ");
         query.setParameter(1, user_email);
         List<Article> articles = query.getResultList();
         return articles;
