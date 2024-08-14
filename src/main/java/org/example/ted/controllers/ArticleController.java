@@ -30,6 +30,11 @@ public class ArticleController {
         return repository.findByUser(user_email);
     }
 
+    @GetMapping("/{user_email}/feed")
+    List<Article> allByUserFeed(@PathVariable(value = "user_email") User user_email) {
+        return repository.userFeed(user_email);
+    }
+
     @PostMapping
     Article newArticle(@RequestBody Article newArticle) {
         return repository.save(newArticle);

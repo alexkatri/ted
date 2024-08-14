@@ -27,13 +27,20 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     @Override
     public List<Article> userFeed(User user_email) {
-        Query query = entityManager.createQuery("SELECT a FROM Article a, Connection con, Comment com, Like l " +
-                "WHERE a.createdBy = ?1" +
-//                "con.user = ?1 " +
-                "" +
-                "" +
-                "" +
-                "OR con.connection_user = ?1 AND a.createdBy = ?1 ");
+        Query query = entityManager.createQuery("SELECT a FROM Article a WHERE a in (" +
+                "SELECT a " +
+                "FROM Article a " +
+                "WHERE a.createdBy = ?1 " +
+                "UNION " +
+                "SELECT a FROM Article a, Connection con " +
+                "WHERE ((con.user = ?1 AND a.createdBy = con.connection_user) OR " +
+                "(con.connection_user = ?1 AND a.createdBy = con.user)) " +
+                "UNION " +
+                "SELECT a FROM Article a, Connection con, Like l " +
+                "WHERE a = l.article AND " +
+                "((con.user = ?1 AND l.createdBy = con.connection_user) OR " +
+                "(con.connection_user = ?1 AND l.createdBy = con.user)))" +
+                "order by a.date desc");
         query.setParameter(1, user_email);
         List<Article> articles = query.getResultList();
         return articles;
