@@ -2,17 +2,21 @@ package org.example.ted.controllers;
 
 import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.models.Advertisement;
+import org.example.ted.models.Notification;
 import org.example.ted.models.User;
 import org.example.ted.repositories.AdvertisementRepository;
+import org.example.ted.repositories.NotificationRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/advertisements")
 public class AdvertisementController {
 
     private AdvertisementRepository repository;
+    private NotificationRepository notificationRepository;
 
     AdvertisementController(AdvertisementRepository repository) {
         this.repository = repository;
@@ -33,6 +37,20 @@ public class AdvertisementController {
     @PostMapping
     Advertisement newAdvertisement(@RequestBody Advertisement newAdvertisement) {
         return repository.save(newAdvertisement);
+    }
+
+    @PostMapping("/{id}/requests")
+    Advertisement requestAdvertisement(@PathVariable(value = "id") Long id,
+                              @RequestBody User requestedBy) {
+        repository.findById(id).ifPresent(advertisement -> {
+            Set<User> request_users = advertisement.getRequest_users();
+            request_users.add(requestedBy);
+            advertisement.setRequest_users(request_users);
+            repository.save(advertisement);
+            notificationRepository.save(new Notification(advertisement.getCreatedBy(), requestedBy,
+                    "new advertisement request"));
+        });
+        return repository.findById(id).get();
     }
 
     // Single item

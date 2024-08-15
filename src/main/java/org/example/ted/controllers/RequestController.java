@@ -1,8 +1,10 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.RequestNotFoundException;
+import org.example.ted.models.Notification;
 import org.example.ted.models.Request;
 import org.example.ted.models.User;
+import org.example.ted.repositories.NotificationRepository;
 import org.example.ted.repositories.RequestRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.List;
 public class RequestController {
 
     private final RequestRepository repository;
+    private NotificationRepository notificationRepository;
 
     RequestController(RequestRepository repository) {
         this.repository = repository;
@@ -27,6 +30,7 @@ public class RequestController {
 
     @PostMapping
     Request newRequest(@RequestBody Request newRequest) {
+        notificationRepository.save(new Notification(newRequest.getReceiver(), newRequest.getSender(), "friend request"));
         return repository.save(newRequest);
     }
 

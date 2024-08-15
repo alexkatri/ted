@@ -28,4 +28,12 @@ public class Notification {
     @Column(name = "type", nullable = false, length = 45)
     private String type;
 
+    public Notification() {
+    }
+
+    public Notification(User receiver, User sender, String type) {
+        this.receiver = receiver;
+        this.sender = sender;
+        this.type = type;
+    }
 }

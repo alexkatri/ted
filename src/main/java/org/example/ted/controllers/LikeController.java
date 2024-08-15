@@ -4,9 +4,11 @@ import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.exceptions.LikeNotFoundException;
 import org.example.ted.models.Advertisement;
 import org.example.ted.models.Like;
+import org.example.ted.models.Notification;
 import org.example.ted.models.User;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.LikeRepository;
+import org.example.ted.repositories.NotificationRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 public class LikeController {
 
     private LikeRepository repository;
+    private NotificationRepository notificationRepository;
 
     LikeController(LikeRepository repository) {
         this.repository = repository;
@@ -35,6 +38,8 @@ public class LikeController {
 
     @PostMapping
     Like newLike(@RequestBody Like newLike) {
+        notificationRepository.save(new Notification(newLike.getArticle().getCreatedBy(), newLike.getCreatedBy(),
+                "new like"));
         return repository.save(newLike);
     }
 

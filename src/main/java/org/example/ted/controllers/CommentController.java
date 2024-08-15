@@ -2,8 +2,10 @@ package org.example.ted.controllers;
 
 import org.example.ted.exceptions.CommentNotFoundException;
 import org.example.ted.models.Comment;
+import org.example.ted.models.Notification;
 import org.example.ted.models.User;
 import org.example.ted.repositories.CommentRepository;
+import org.example.ted.repositories.NotificationRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 public class CommentController {
 
     private final CommentRepository repository;
+    private NotificationRepository notificationRepository;
 
     CommentController(CommentRepository repository) {
         this.repository = repository;
@@ -32,6 +35,8 @@ public class CommentController {
 
     @PostMapping
     Comment newComment(@RequestBody Comment newComment) {
+        notificationRepository.save(new Notification(newComment.getArticle().getCreatedBy(), newComment.getCreatedBy(), "" +
+                "new comment"));
         return repository.save(newComment);
     }
 

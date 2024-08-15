@@ -54,6 +54,7 @@ public class WebSecurity {
                 .requestMatchers("/images/**").permitAll()
                 .requestMatchers("/articles/**").permitAll()
                 .requestMatchers("/advertisements/**").permitAll()
+                .requestMatchers("/users/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
