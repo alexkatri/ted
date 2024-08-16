@@ -1,13 +1,11 @@
 package org.example.ted.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -43,4 +41,7 @@ public class Article {
     @OneToMany(mappedBy = "article")
     private Set<Like> likes = new LinkedHashSet<>();
 
+    @OneToOne(mappedBy = "article")
+    @JsonIgnoreProperties("article")
+    private ArticleMultimedia multimedia;
 }

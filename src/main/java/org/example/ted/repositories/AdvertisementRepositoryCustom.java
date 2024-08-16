@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface AdvertisementRepositoryCustom {
     List<Advertisement> findByUser(User created_by);
+    List<Advertisement> showAdvertisements(User user);
 }

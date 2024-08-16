@@ -1,8 +1,11 @@
 package org.example.ted.controllers;
 
+import org.example.ted.models.Comment;
+import org.example.ted.models.Like;
 import org.example.ted.models.Notification;
 import org.example.ted.models.User;
 import org.example.ted.repositories.NotificationRepository;
+import org.example.ted.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +15,11 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationRepository repository;
+    private final UserRepository userRepository;
 
-    NotificationController(NotificationRepository repository) {
+    NotificationController(NotificationRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // Aggregate root
@@ -27,6 +32,16 @@ public class NotificationController {
     @GetMapping("/user/{receiver}")
     List<Notification> allByReceiver(@PathVariable(value = "receiver") User receiver) {
         return repository.findByReceiver(receiver);
+    }
+
+    @GetMapping("/user/{user_email}/likes")
+    List<Like> getNotificationLikes(@PathVariable(value = "user_email") User user_email) {
+        return repository.getNotificationLikes(user_email);
+    }
+
+    @GetMapping("/user/{user_email}/comments")
+    List<Comment> getNotificationComments(@PathVariable(value = "user_email") User user_email) {
+        return repository.getNotificationComments(user_email);
     }
 
     @PostMapping

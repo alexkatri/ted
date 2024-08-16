@@ -34,6 +34,11 @@ public class AdvertisementController {
         return repository.findByUser(createdBy);
     }
 
+    @GetMapping("/{user}/show")
+    List<Advertisement> showAdvertisements(@PathVariable(value = "user") User user) {
+        return repository.showAdvertisements(user);
+    }
+
     @PostMapping
     Advertisement newAdvertisement(@RequestBody Advertisement newAdvertisement) {
         return repository.save(newAdvertisement);

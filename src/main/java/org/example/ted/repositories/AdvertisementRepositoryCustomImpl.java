@@ -24,4 +24,13 @@ public class AdvertisementRepositoryCustomImpl implements AdvertisementRepositor
         List<Advertisement> advertisements = query.getResultList();
         return advertisements;
     }
+
+    @Override
+    public List<Advertisement> showAdvertisements(User user) {
+        Query query = entityManager.createQuery("SELECT a FROM Advertisement a WHERE a " +
+                        "NOT IN (SELECT b FROM Advertisement b WHERE b.createdBy = ?1)");
+        query.setParameter(1, user);
+        List<Advertisement> advertisements = query.getResultList();
+        return advertisements;
+    }
 }
