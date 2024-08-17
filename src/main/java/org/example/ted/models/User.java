@@ -61,7 +61,7 @@ public class User {
     @JsonIgnoreProperties("receiver")
     private Set<Request> received_requests = new LinkedHashSet<>();
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("users")
     private Set<Role> roles = new LinkedHashSet<>();
 
