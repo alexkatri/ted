@@ -5,7 +5,10 @@ import org.example.ted.dto.LoginDto;
 import org.example.ted.dto.RegisterDto;
 import org.example.ted.models.Role;
 import org.example.ted.models.User;
+import org.example.ted.models.UserAdvertisementMatrix;
+import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.RoleRepository;
+import org.example.ted.repositories.UserAdvertisementMatrixRepository;
 import org.example.ted.repositories.UserRepository;
 import org.example.ted.security.JWTGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +35,18 @@ public class AuthController {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private JWTGenerator jwtGenerator;
+    private AdvertisementRepository advertisementRepository;
+    private UserAdvertisementMatrixRepository userAdvertisementMatrixRepository;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                          PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, RoleRepository roleRepository) {
+                          PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, RoleRepository roleRepository, UserAdvertisementMatrixRepository userAdvertisementMatrixRepository) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
         this.roleRepository = roleRepository;
+        this.userAdvertisementMatrixRepository = userAdvertisementMatrixRepository;
     }
 
     @PostMapping("login")
@@ -68,6 +74,10 @@ public class AuthController {
         user.setRoles(Collections.singleton(roles));
 
         userRepository.save(user);
+        for (int i = 1; i <= advertisementRepository.count(); i++) {
+            userAdvertisementMatrixRepository.save(new UserAdvertisementMatrix(user, advertisementRepository.findById((long) i)));
+
+        }
         return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);
     }
 }

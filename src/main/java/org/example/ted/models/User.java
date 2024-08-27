@@ -14,6 +14,9 @@ import java.util.Set;
 @Table(name = "user")
 public class User {
     @Id
+    @Column(name = "id", nullable = false)
+    private int id;
+
     @Column(name = "email", nullable = false, length = 60)
     private String email;
 
@@ -84,6 +87,17 @@ public class User {
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties("createdBy")
     private Set<Like> likes = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private Set<UserAdvertisementMatrix> userAdvertisementMatrices = new LinkedHashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "user_skills",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "skills_id"))
+    @JsonIgnoreProperties("users")
+    private Set<Skill> skills = new LinkedHashSet<>();
 
     public User() {}
     public User(String email, String password) {

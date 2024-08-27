@@ -3,9 +3,12 @@ package org.example.ted.controllers;
 import org.example.ted.exceptions.ArticleNotFoundException;
 import org.example.ted.models.*;
 import org.example.ted.repositories.ArticleRepository;
+import org.example.ted.repositories.UserRepository;
+import org.example.ted.security.JWTGenerator;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -13,9 +16,13 @@ import java.util.Set;
 public class ArticleController {
 
     private final ArticleRepository repository;
+    private UserRepository userRepository;
+    private JWTGenerator JWTgenerator;
 
-    ArticleController(ArticleRepository repository) {
+    ArticleController(ArticleRepository repository, UserRepository userRepository, JWTGenerator jwTgenerator) {
         this.repository = repository;
+        this.userRepository = userRepository;
+        JWTgenerator = jwTgenerator;
     }
 
     // Aggregate root
@@ -30,9 +37,16 @@ public class ArticleController {
         return repository.findByUser(user_email);
     }
 
-    @GetMapping("/{user_email}/feed")
-    List<Article> allByUserFeed(@PathVariable(value = "user_email") User user_email) {
-        return repository.userFeed(user_email);
+    @GetMapping("/feed")
+    List<Article> allByUserFeed(@RequestHeader(name = "Authorization") String token) {
+        token = token.substring(7);
+        if (!JWTgenerator.validateToken(token)) {
+            return null;
+        }
+        String user_email = JWTgenerator.getEmailFromJWT(token);
+        Optional<User> user = userRepository.findByEmail(user_email);
+        User userEntity = user.get();
+        return repository.userFeed(userEntity);
     }
 
     @PostMapping

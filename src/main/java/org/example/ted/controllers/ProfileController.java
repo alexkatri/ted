@@ -54,7 +54,6 @@ public class ProfileController {
                     profile.setCv(newProfile.getCv());
                     profile.setExperience(newProfile.getExperience());
                     profile.setEducation(newProfile.getEducation());
-                    profile.setSkills(newProfile.getSkills());
                     return repository.save(profile);
                 })
                 .orElseGet(() -> {

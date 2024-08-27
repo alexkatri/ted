@@ -26,9 +26,6 @@ public class Profile {
     @Column(name = "education", columnDefinition = "TEXT")
     private String education;
 
-    @Column(name = "skills", columnDefinition = "TEXT")
-    private String skills;
-
     @Column(name = "cv", columnDefinition = "TEXT")
     private String cv;
 

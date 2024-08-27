@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -26,10 +27,11 @@ public class AdvertisementRepositoryCustomImpl implements AdvertisementRepositor
     }
 
     @Override
-    public List<Advertisement> showAdvertisements(User user) {
+    public List<Advertisement> showAdvertisements(Optional<User> user) {
+        User userEntity = user.get();
         Query query = entityManager.createQuery("SELECT a FROM Advertisement a WHERE a " +
                         "NOT IN (SELECT b FROM Advertisement b WHERE b.createdBy = ?1)");
-        query.setParameter(1, user);
+        query.setParameter(1, userEntity);
         List<Advertisement> advertisements = query.getResultList();
         return advertisements;
     }

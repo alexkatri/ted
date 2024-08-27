@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @DeleteMapping("{user_email}")
-    void deleteUser(@PathVariable String user_email) {
-        repository.deleteById(user_email);
+    void deleteUser(@PathVariable int id) {
+        repository.deleteById(id);
     }
 }

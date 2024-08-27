@@ -4,11 +4,16 @@ import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.models.Advertisement;
 import org.example.ted.models.Notification;
 import org.example.ted.models.User;
+import org.example.ted.models.UserAdvertisementMatrix;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.NotificationRepository;
+import org.example.ted.repositories.UserAdvertisementMatrixRepository;
+import org.example.ted.repositories.UserRepository;
+import org.example.ted.security.JWTGenerator;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -17,9 +22,16 @@ public class AdvertisementController {
 
     private AdvertisementRepository repository;
     private NotificationRepository notificationRepository;
+    private UserRepository userRepository;
+    private UserAdvertisementMatrixRepository userAdvertisementMatrixRepository;
+    private JWTGenerator JWTgenerator;
 
-    AdvertisementController(AdvertisementRepository repository) {
+    AdvertisementController(AdvertisementRepository repository, NotificationRepository notificationRepository, UserRepository userRepository, UserAdvertisementMatrixRepository userAdvertisementMatrixRepository, JWTGenerator jwTgenerator) {
         this.repository = repository;
+        this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
+        this.userAdvertisementMatrixRepository = userAdvertisementMatrixRepository;
+        JWTgenerator = jwTgenerator;
     }
 
     // Aggregate root
@@ -34,13 +46,22 @@ public class AdvertisementController {
         return repository.findByUser(createdBy);
     }
 
-    @GetMapping("/{user}/show")
-    List<Advertisement> showAdvertisements(@PathVariable(value = "user") User user) {
+    @GetMapping("/show")
+    List<Advertisement> showAdvertisements(@RequestHeader(name = "Authorization") String token) {
+        token = token.substring(7);
+        if (!JWTgenerator.validateToken(token)) {
+            return null;
+        }
+        String user_email = JWTgenerator.getEmailFromJWT(token);
+        Optional<User> user = userRepository.findByEmail(user_email);
         return repository.showAdvertisements(user);
     }
 
     @PostMapping
     Advertisement newAdvertisement(@RequestBody Advertisement newAdvertisement) {
+        for (int i = 1; i <= userRepository.count(); i++) {
+            userAdvertisementMatrixRepository.save(new UserAdvertisementMatrix(userRepository.findById(i).get(), newAdvertisement));
+        }
         return repository.save(newAdvertisement);
     }
 

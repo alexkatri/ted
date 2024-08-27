@@ -32,4 +32,15 @@ public class Advertisement {
             inverseJoinColumns = @JoinColumn(name = "request_user"))
     private Set<User> request_users = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "advertisement")
+    @JsonIgnoreProperties("advertisement")
+    private Set<UserAdvertisementMatrix> userAdvertisementMatrices = new LinkedHashSet<>();
+
+    public Advertisement() {
+    }
+
+    public Advertisement(User createdBy, String text) {
+        this.createdBy = createdBy;
+        this.text = text;
+    }
 }
