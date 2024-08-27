@@ -49,4 +49,11 @@ public class UserAdvertisementMatrix {
         this.user = user;
         this.advertisement = byId.orElse(null);
     }
+
+    public UserAdvertisementMatrix(User user, Advertisement advertisement, Integer value, String state) {
+        this.user = user;
+        this.advertisement = advertisement;
+        this.value = value;
+        this.state = state;
+    }
 }
