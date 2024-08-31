@@ -19,13 +19,13 @@ public class NotificationRepositoryCustomImpl implements NotificationRepositoryC
     @PersistenceContext
     EntityManager entityManager;
 
-    @Override
-    public List<Notification> findByReceiver(User receiver) {
-        Query query = entityManager.createQuery("SELECT n FROM Notification n WHERE n.receiver = ?1");
-        query.setParameter(1, receiver);
-        List<Notification> notifications = query.getResultList();
-        return notifications;
-    }
+//    @Override
+//    public List<Notification> findByReceiver(User receiver) {
+//        Query query = entityManager.createQuery("SELECT n FROM Notification n WHERE n.receiver = ?1");
+//        query.setParameter(1, receiver);
+//        List<Notification> notifications = query.getResultList();
+//        return notifications;
+//    }
 
     @Override
     public List<Like> getNotificationLikes(User user_email) {

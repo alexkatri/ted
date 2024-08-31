@@ -30,7 +30,7 @@ public class CommentController {
 
     @GetMapping("/user/{created_by}")
     List<Comment> allByUser(@PathVariable(value = "created_by") User createdBy) {
-        return repository.findByUser(createdBy);
+        return repository.findByCreatedBy(createdBy);
     }
 
     @PostMapping

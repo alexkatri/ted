@@ -17,13 +17,13 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Override
-    public List<Article> findByUser(User user_email) {
-        Query query = entityManager.createQuery("SELECT a FROM Article a WHERE a.createdBy = ?1");
-        query.setParameter(1, user_email);
-        List<Article> articles = query.getResultList();
-        return articles;
-    }
+//    @Override
+//    public List<Article> findByUser(User user_email) {
+//        Query query = entityManager.createQuery("SELECT a FROM Article a WHERE a.createdBy = ?1");
+//        query.setParameter(1, user_email);
+//        List<Article> articles = query.getResultList();
+//        return articles;
+//    }
 
     @Override
     public List<Article> userFeed(User user_email) {

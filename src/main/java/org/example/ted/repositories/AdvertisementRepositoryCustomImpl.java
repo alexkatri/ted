@@ -18,13 +18,13 @@ public class AdvertisementRepositoryCustomImpl implements AdvertisementRepositor
     @PersistenceContext
     EntityManager entityManager;
 
-    @Override
-    public List<Advertisement> findByUser(User created_by) {
-        Query query = entityManager.createQuery("SELECT a FROM Advertisement a WHERE a.createdBy = ?1");
-        query.setParameter(1, created_by);
-        List<Advertisement> advertisements = query.getResultList();
-        return advertisements;
-    }
+//    @Override
+//    public List<Advertisement> findByUser(User created_by) {
+//        Query query = entityManager.createQuery("SELECT a FROM Advertisement a WHERE a.createdBy = ?1");
+//        query.setParameter(1, created_by);
+//        List<Advertisement> advertisements = query.getResultList();
+//        return advertisements;
+//    }
 
     @Override
     public List<Advertisement> showAdvertisements(Optional<User> user) {

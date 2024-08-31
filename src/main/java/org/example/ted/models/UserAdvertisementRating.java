@@ -11,10 +11,10 @@ import java.util.Optional;
 @Getter
 @Setter
 @Entity
-@Table(name = "user_advertisement_matrix")
-public class UserAdvertisementMatrix {
+@Table(name = "user_advertisement_rating")
+public class UserAdvertisementRating {
     @EmbeddedId
-    private UserAdvertisementMatrixId id;
+    private UserAdvertisementRatingId id;
 
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -36,21 +36,21 @@ public class UserAdvertisementMatrix {
     @Column(name = "state", nullable = false, length = 45)
     private String state;
 
-    public UserAdvertisementMatrix(User user, Advertisement advertisement) {
+    public UserAdvertisementRating(User user, Advertisement advertisement) {
         this.user = user;
         this.advertisement = advertisement;
     }
 
-    public UserAdvertisementMatrix() {
+    public UserAdvertisementRating() {
 
     }
 
-    public UserAdvertisementMatrix(User user, Optional<Advertisement> byId) {
+    public UserAdvertisementRating(User user, Optional<Advertisement> byId) {
         this.user = user;
         this.advertisement = byId.orElse(null);
     }
 
-    public UserAdvertisementMatrix(User user, Advertisement advertisement, Integer value, String state) {
+    public UserAdvertisementRating(User user, Advertisement advertisement, Integer value, String state) {
         this.user = user;
         this.advertisement = advertisement;
         this.value = value;

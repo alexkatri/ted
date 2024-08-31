@@ -8,6 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdvertisementRepositoryCustom {
-    List<Advertisement> findByUser(User created_by);
     List<Advertisement> showAdvertisements(Optional<User> user);
 }

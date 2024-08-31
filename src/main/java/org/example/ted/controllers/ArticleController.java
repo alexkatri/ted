@@ -34,7 +34,8 @@ public class ArticleController {
 
     @GetMapping("/user/{user_email}")
     List<Article> allByUser(@PathVariable(value = "user_email") User user_email) {
-        return repository.findByUser(user_email);
+
+        return repository.findByCreatedBy(user_email);
     }
 
     @GetMapping("/feed")

@@ -34,7 +34,7 @@ public class Advertisement {
 
     @OneToMany(mappedBy = "advertisement")
     @JsonIgnoreProperties("advertisement")
-    private Set<UserAdvertisementMatrix> userAdvertisementMatrices = new LinkedHashSet<>();
+    private Set<UserAdvertisementRating> userAdvertisementRatings = new LinkedHashSet<>();
 
     public Advertisement() {
     }

@@ -5,10 +5,10 @@ import org.example.ted.dto.LoginDto;
 import org.example.ted.dto.RegisterDto;
 import org.example.ted.models.Role;
 import org.example.ted.models.User;
-import org.example.ted.models.UserAdvertisementMatrix;
+import org.example.ted.models.UserAdvertisementRating;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.RoleRepository;
-import org.example.ted.repositories.UserAdvertisementMatrixRepository;
+import org.example.ted.repositories.UserAdvertisementRatingRepository;
 import org.example.ted.repositories.UserRepository;
 import org.example.ted.security.JWTGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +36,17 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     private JWTGenerator jwtGenerator;
     private AdvertisementRepository advertisementRepository;
-    private UserAdvertisementMatrixRepository userAdvertisementMatrixRepository;
+    private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                          PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, RoleRepository roleRepository, UserAdvertisementMatrixRepository userAdvertisementMatrixRepository) {
+                          PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, RoleRepository roleRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
         this.roleRepository = roleRepository;
-        this.userAdvertisementMatrixRepository = userAdvertisementMatrixRepository;
+        this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
     }
 
     @PostMapping("login")
@@ -75,7 +75,7 @@ public class AuthController {
 
         userRepository.save(user);
         for (int i = 1; i <= advertisementRepository.count(); i++) {
-            userAdvertisementMatrixRepository.save(new UserAdvertisementMatrix(user, advertisementRepository.findById((long) i)));
+            userAdvertisementRatingRepository.save(new UserAdvertisementRating(user, advertisementRepository.findById((long) i)));
 
         }
         return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);

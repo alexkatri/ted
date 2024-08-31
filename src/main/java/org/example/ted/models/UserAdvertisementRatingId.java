@@ -11,7 +11,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Embeddable
-public class UserAdvertisementMatrixId implements java.io.Serializable {
+public class UserAdvertisementRatingId implements java.io.Serializable {
     private static final long serialVersionUID = 2818865480451646843L;
     @Column(name = "user_id", nullable = false)
     private Integer userId;
@@ -19,10 +19,10 @@ public class UserAdvertisementMatrixId implements java.io.Serializable {
     @Column(name = "advertisement_id", nullable = false)
     private Integer advertisementId;
 
-    public UserAdvertisementMatrixId() {
+    public UserAdvertisementRatingId() {
     }
 
-    public UserAdvertisementMatrixId(int userId, int advertisementId) {
+    public UserAdvertisementRatingId(int userId, int advertisementId) {
         this.userId = userId;
         this.advertisementId = advertisementId;
     }
@@ -31,7 +31,7 @@ public class UserAdvertisementMatrixId implements java.io.Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        UserAdvertisementMatrixId entity = (UserAdvertisementMatrixId) o;
+        UserAdvertisementRatingId entity = (UserAdvertisementRatingId) o;
         return Objects.equals(this.advertisementId, entity.advertisementId) &&
                 Objects.equals(this.userId, entity.userId);
     }

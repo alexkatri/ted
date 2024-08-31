@@ -41,7 +41,7 @@ public class ProfileController {
 
     @GetMapping("/user/{created_by}")
     Profile byUser(@PathVariable(value = "created_by") User created_by) {
-        return repository.findByUser(created_by);
+        return repository.findByCreatedBy(created_by);
     }
 
 

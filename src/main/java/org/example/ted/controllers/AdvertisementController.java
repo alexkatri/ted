@@ -4,10 +4,10 @@ import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.models.Advertisement;
 import org.example.ted.models.Notification;
 import org.example.ted.models.User;
-import org.example.ted.models.UserAdvertisementMatrix;
+import org.example.ted.models.UserAdvertisementRating;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.NotificationRepository;
-import org.example.ted.repositories.UserAdvertisementMatrixRepository;
+import org.example.ted.repositories.UserAdvertisementRatingRepository;
 import org.example.ted.repositories.UserRepository;
 import org.example.ted.security.JWTGenerator;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +23,14 @@ public class AdvertisementController {
     private AdvertisementRepository repository;
     private NotificationRepository notificationRepository;
     private UserRepository userRepository;
-    private UserAdvertisementMatrixRepository userAdvertisementMatrixRepository;
+    private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
     private JWTGenerator JWTgenerator;
 
-    AdvertisementController(AdvertisementRepository repository, NotificationRepository notificationRepository, UserRepository userRepository, UserAdvertisementMatrixRepository userAdvertisementMatrixRepository, JWTGenerator jwTgenerator) {
+    AdvertisementController(AdvertisementRepository repository, NotificationRepository notificationRepository, UserRepository userRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository, JWTGenerator jwTgenerator) {
         this.repository = repository;
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
-        this.userAdvertisementMatrixRepository = userAdvertisementMatrixRepository;
+        this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
         JWTgenerator = jwTgenerator;
     }
 
@@ -43,25 +43,7 @@ public class AdvertisementController {
 
     @GetMapping("/user/{created_by}")
     List<Advertisement> allByUser(@PathVariable(value = "created_by") User createdBy) {
-        return repository.findByUser(createdBy);
-    }
-
-    @GetMapping("/{id}")
-    Advertisement byId(@PathVariable long id, @RequestHeader(name = "Authorization") String token) {
-        token = token.substring(7);
-        if (!JWTgenerator.validateToken(token)) {
-            return null;
-        }
-        String user_email = JWTgenerator.getEmailFromJWT(token);
-        Optional<User> user = userRepository.findByEmail(user_email);
-        if (!user.isPresent()) {
-            return null;
-        }
-        User userEntity = user.get();
-        if (repository.existsById(id)) {
-            userAdvertisementMatrixRepository.save(new UserAdvertisementMatrix(userEntity, repository.findById(id).get(), 1, "known"));
-        }
-        return repository.findById(id).orElseThrow(() -> new AdvertisementNotFoundException(id));
+        return repository.findByCreatedBy(createdBy);
     }
 
     @GetMapping("/show")
@@ -77,9 +59,6 @@ public class AdvertisementController {
 
     @PostMapping
     Advertisement newAdvertisement(@RequestBody Advertisement newAdvertisement) {
-        for (int i = 1; i <= userRepository.count(); i++) {
-            userAdvertisementMatrixRepository.save(new UserAdvertisementMatrix(userRepository.findById(i).get(), newAdvertisement));
-        }
         return repository.save(newAdvertisement);
     }
 
@@ -99,13 +78,30 @@ public class AdvertisementController {
 
     // Single item
 
-    @GetMapping("{id}")
-    Advertisement one(@PathVariable long id) {
+//    @GetMapping("{id}")
+//    Advertisement one(@PathVariable long id) {
+//
+//        return repository.findById(id)
+//                .orElseThrow(() -> new AdvertisementNotFoundException(id));
+//    }
 
-        return repository.findById(id)
-                .orElseThrow(() -> new AdvertisementNotFoundException(id));
+    @GetMapping("/{id}")
+    Advertisement byId(@PathVariable long id, @RequestHeader(name = "Authorization") String token) {
+        token = token.substring(7);
+        if (!JWTgenerator.validateToken(token)) {
+            return null;
+        }
+        String user_email = JWTgenerator.getEmailFromJWT(token);
+        Optional<User> user = userRepository.findByEmail(user_email);
+        if (!user.isPresent()) {
+            return null;
+        }
+        User userEntity = user.get();
+        if (repository.existsById(id)) {
+            userAdvertisementRatingRepository.save(new UserAdvertisementRating(userEntity, repository.findById(id).get(), 1, "known"));
+        }
+        return repository.findById(id).orElseThrow(() -> new AdvertisementNotFoundException(id));
     }
-
 
     @PutMapping("{id}")
     Advertisement replaceAdvertisement(@RequestBody Advertisement newAdvertisement, @PathVariable long id) {

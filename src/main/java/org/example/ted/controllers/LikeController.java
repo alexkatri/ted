@@ -33,7 +33,7 @@ public class LikeController {
 
     @GetMapping("/user/{created_by}")
     List<Like> allByUser(@PathVariable(value = "created_by") User createdBy) {
-        return repository.findByUser(createdBy);
+        return repository.findByCreatedBy(createdBy);
     }
 
     @PostMapping

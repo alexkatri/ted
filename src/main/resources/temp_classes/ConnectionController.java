@@ -1,4 +1,4 @@
-package org.example.ted.controllers;
+package temp_classes;
 
 import org.example.ted.exceptions.ConnectionNotFoundException;
 import org.example.ted.models.Connection;
@@ -26,7 +26,7 @@ public class ConnectionController {
     }
 
     @GetMapping("/user/{user}")
-    List<User> allByUser(@PathVariable(value = "user") User user) {
+    List<Connection> allByUser(@PathVariable(value = "user") User user) {
         return repository.findByUser(user);
     }
 

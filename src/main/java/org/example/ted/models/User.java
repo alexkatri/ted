@@ -15,7 +15,7 @@ import java.util.Set;
 public class User {
     @Id
     @Column(name = "id", nullable = false)
-    private int id;
+    private long id;
 
     @Column(name = "email", nullable = false, length = 60)
     private String email;
@@ -90,7 +90,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties("user")
-    private Set<UserAdvertisementMatrix> userAdvertisementMatrices = new LinkedHashSet<>();
+    private Set<UserAdvertisementRating> userAdvertisementRatings = new LinkedHashSet<>();
 
     @ManyToMany
     @JoinTable(name = "user_skills",
