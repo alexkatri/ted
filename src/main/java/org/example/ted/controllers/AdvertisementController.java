@@ -41,8 +41,9 @@ public class AdvertisementController {
         return repository.findAll();
     }
 
-    @GetMapping("/user/{created_by}")
-    List<Advertisement> allByUser(@PathVariable(value = "created_by") User createdBy) {
+    @GetMapping("/user/{id}")
+    List<Advertisement> allByUser(@PathVariable(value = "id") long id) {
+        User createdBy = userRepository.findById(id).get();
         return repository.findByCreatedBy(createdBy);
     }
 

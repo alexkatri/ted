@@ -1,9 +1,11 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ImageNotFoundException;
+import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.Image;
 import org.example.ted.models.User;
 import org.example.ted.repositories.ImageRepository;
+import org.example.ted.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -24,9 +26,11 @@ class ImageController {
     private static String UPLOADED_FOLDER = "C://Users//sgt_o//IdeaProjects//ted//src//main//resources//templates";
 
     private final ImageRepository repository;
+    private final UserRepository userRepository;
 
-    ImageController(ImageRepository repository) {
+    ImageController(ImageRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("uploadStatus")
@@ -46,9 +50,10 @@ class ImageController {
                 .orElseThrow(() -> new ImageNotFoundException(id));
     }
 
-    @GetMapping("/user/{user_email}")
-    Image byUser(@PathVariable(value = "user_email") User user_email) {
-        return repository.findByUser(user_email);
+    @GetMapping("/user/{id}")
+    Image byUser(@PathVariable(value = "id") long id) {
+        User user = userRepository.findById(id).get();
+        return repository.findByUser(user);
     }
 
     @PostMapping("upload")

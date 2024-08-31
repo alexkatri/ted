@@ -1,9 +1,11 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ProfileNotFoundException;
+import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.Profile;
 import org.example.ted.models.User;
 import org.example.ted.repositories.ProfileRepository;
+import org.example.ted.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,9 +15,11 @@ import java.util.List;
 public class ProfileController {
 
     private final ProfileRepository repository;
+    private final UserRepository userRepository;
 
-    ProfileController(ProfileRepository repository) {
+    ProfileController(ProfileRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // Aggregate root
@@ -39,9 +43,10 @@ public class ProfileController {
                 .orElseThrow(() -> new ProfileNotFoundException(id));
     }
 
-    @GetMapping("/user/{created_by}")
-    Profile byUser(@PathVariable(value = "created_by") User created_by) {
-        return repository.findByCreatedBy(created_by);
+    @GetMapping("/user/{id}")
+    Profile byUser(@PathVariable(value = "id") long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return repository.findByCreatedBy(user);
     }
 
 

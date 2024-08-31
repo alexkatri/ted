@@ -31,18 +31,16 @@ public class UserController {
 
     // Single item
 
-    @GetMapping("{user_email}")
-    User one(@PathVariable String user_email) {
-
-        return repository.findByEmail(user_email)
-                .orElseThrow(() -> new UserNotFoundException(user_email));
+    @GetMapping("{id}")
+    User one(@PathVariable long id) {
+        return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
 
-    @PutMapping("{user_email}")
-    User replaceUser(@RequestBody User newUser, @PathVariable String user_email) {
+    @PutMapping("{id}")
+    User replaceUser(@RequestBody User newUser, @PathVariable long id) {
 
-        return repository.findByEmail(user_email)
+        return repository.findById(id)
                 .map(user -> {
                     user.setEmail(newUser.getEmail());
                     user.setPassword(newUser.getPassword());
@@ -52,15 +50,15 @@ public class UserController {
                     user.setRoles(newUser.getRoles());
                     return repository.save(user);
                 })
-                .orElseThrow(() -> new UserNotFoundException(user_email));
+                .orElseThrow(() -> new UserNotFoundException(id));
 //                .orElseGet(() -> {
 //                    newUser.setEmail(user_email);
 //                    return repository.save(newUser);
 //                });
     }
 
-    @DeleteMapping("{user_email}")
-    void deleteUser(@PathVariable int id) {
-        repository.deleteById(id);
+    @DeleteMapping("{id}")
+    void deleteUser(@PathVariable long id) {
+        repository.deleteById((int) id);
     }
 }

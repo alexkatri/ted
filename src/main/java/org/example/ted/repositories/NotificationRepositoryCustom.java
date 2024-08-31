@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface NotificationRepositoryCustom {
 //    List<Notification> findByReceiver(User receiver);
-    List<Like> getNotificationLikes(User user_email);
-    List<Comment> getNotificationComments(User user_email);
+    List<Like> getNotificationLikes(User user);
+    List<Comment> getNotificationComments(User user);
 }

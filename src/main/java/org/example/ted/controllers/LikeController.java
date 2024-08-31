@@ -2,6 +2,7 @@ package org.example.ted.controllers;
 
 import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.exceptions.LikeNotFoundException;
+import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.Advertisement;
 import org.example.ted.models.Like;
 import org.example.ted.models.Notification;
@@ -9,6 +10,7 @@ import org.example.ted.models.User;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.LikeRepository;
 import org.example.ted.repositories.NotificationRepository;
+import org.example.ted.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,11 +19,13 @@ import java.util.List;
 @RequestMapping("/likes")
 public class LikeController {
 
+    private final UserRepository userRepository;
     private LikeRepository repository;
     private NotificationRepository notificationRepository;
 
-    LikeController(LikeRepository repository) {
+    LikeController(LikeRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // Aggregate root
@@ -31,8 +35,9 @@ public class LikeController {
         return repository.findAll();
     }
 
-    @GetMapping("/user/{created_by}")
-    List<Like> allByUser(@PathVariable(value = "created_by") User createdBy) {
+    @GetMapping("/user/{id}")
+    List<Like> allByUser(@PathVariable(value = "id") long id) {
+        User createdBy = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return repository.findByCreatedBy(createdBy);
     }
 

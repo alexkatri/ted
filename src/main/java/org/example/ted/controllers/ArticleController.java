@@ -32,10 +32,10 @@ public class ArticleController {
         return repository.findAll().stream().sorted().toList();
     }
 
-    @GetMapping("/user/{user_email}")
-    List<Article> allByUser(@PathVariable(value = "user_email") User user_email) {
-
-        return repository.findByCreatedBy(user_email);
+    @GetMapping("/user/{id}")
+    List<Article> allByUser(@PathVariable(value = "id") long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        return repository.findByCreatedBy(user).stream().sorted().toList();
     }
 
     @GetMapping("/feed")

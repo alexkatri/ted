@@ -1,5 +1,6 @@
 package org.example.ted.controllers;
 
+import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.Comment;
 import org.example.ted.models.Like;
 import org.example.ted.models.Notification;
@@ -34,14 +35,16 @@ public class NotificationController {
         return repository.findByReceiverId(id);
     }
 
-    @GetMapping("/user/{user_email}/likes")
-    List<Like> getNotificationLikes(@PathVariable(value = "user_email") User user_email) {
-        return repository.getNotificationLikes(user_email);
+    @GetMapping("/user/{id}/likes")
+    List<Like> getNotificationLikes(@PathVariable(value = "id") long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+        return repository.getNotificationLikes(user);
     }
 
-    @GetMapping("/user/{user_email}/comments")
-    List<Comment> getNotificationComments(@PathVariable(value = "user_email") User user_email) {
-        return repository.getNotificationComments(user_email);
+    @GetMapping("/user/{id}/comments")
+    List<Comment> getNotificationComments(@PathVariable(value = "id") long id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+        return repository.getNotificationComments(user);
     }
 
     @PostMapping

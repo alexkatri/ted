@@ -6,6 +6,7 @@ import org.example.ted.models.Notification;
 import org.example.ted.models.User;
 import org.example.ted.repositories.CommentRepository;
 import org.example.ted.repositories.NotificationRepository;
+import org.example.ted.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,10 +16,12 @@ import java.util.List;
 public class CommentController {
 
     private final CommentRepository repository;
+    private final UserRepository userRepository;
     private NotificationRepository notificationRepository;
 
-    CommentController(CommentRepository repository) {
+    CommentController(CommentRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // Aggregate root
@@ -28,8 +31,9 @@ public class CommentController {
         return repository.findAll();
     }
 
-    @GetMapping("/user/{created_by}")
-    List<Comment> allByUser(@PathVariable(value = "created_by") User createdBy) {
+    @GetMapping("/user/{id}")
+    List<Comment> allByUser(@PathVariable(value = "id") long id) {
+        User createdBy = userRepository.findById(id).get();
         return repository.findByCreatedBy(createdBy);
     }
 

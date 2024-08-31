@@ -28,19 +28,19 @@ public class NotificationRepositoryCustomImpl implements NotificationRepositoryC
 //    }
 
     @Override
-    public List<Like> getNotificationLikes(User user_email) {
+    public List<Like> getNotificationLikes(User user) {
         Query query = entityManager.createQuery("SELECT l FROM Like l, Article a " +
                 "WHERE a.createdBy = ?1 AND a = l.article");
-        query.setParameter(1, user_email);
+        query.setParameter(1, user);
         List<Like> likes = query.getResultList();
         return likes;
     }
 
     @Override
-    public List<Comment> getNotificationComments(User user_email) {
+    public List<Comment> getNotificationComments(User user) {
         Query query = entityManager.createQuery("SELECT c FROM Comment c, Article a " +
                 "WHERE a.createdBy = ?1 AND a = c.article");
-        query.setParameter(1, user_email);
+        query.setParameter(1, user);
         List<Comment> comments = query.getResultList();
         return comments;
     }
