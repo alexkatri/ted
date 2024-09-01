@@ -9,6 +9,7 @@ import org.example.ted.models.UserAdvertisementRating;
 import org.example.ted.models.UserAdvertisementRatingId;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.UserAdvertisementRatingRepository;
+import org.example.ted.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,14 @@ public class MatrixFactorization {
     private double[][] F;
     private double[][] r;
     private double h = 0.0002;
+    private UserRepository userRepository;
     private AdvertisementRepository advertisementRepository;
     private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
 
-    public double[][] factorization(int rows, int cols, int K) {
+    public double[][] factorization(int K) {
+
+        int rows = (int) userRepository.count();
+        int cols = (int) advertisementRepository.count();
 
         // V , F initialization
         this.V = matrixInitialization(rows, K);
@@ -62,7 +67,7 @@ public class MatrixFactorization {
         for (int i = 1; i <= rows; i++) {
             for (int j = 1; j <= cols; j++) {
                 // gain data from database for R[i][j]
-                Optional<UserAdvertisementRating> Rij = userAdvertisementRatingRepository.findById(new UserAdvertisementRatingId(i+1, j+1));
+                Optional<UserAdvertisementRating> Rij = userAdvertisementRatingRepository.findById(new UserAdvertisementRatingId(i, j));
                 if (Rij.get().getValue().equals("known")) {
                     r[i][j] = Rij.get().getValue();
                     continue;

@@ -31,7 +31,7 @@ public class NotificationController {
     }
 
     @GetMapping("/user/{id}")
-    List<Notification> allByReceiver(@PathVariable(value = "receiver") long id) {
+    List<Notification> allByReceiver(@PathVariable(value = "id") long id) {
         return repository.findByReceiverId(id);
     }
 

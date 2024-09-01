@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserAdvertisementRatingRepository extends JpaRepository<UserAdvertisementRating, UserAdvertisementRatingId> {
+public interface UserAdvertisementRatingRepository extends JpaRepository<UserAdvertisementRating, UserAdvertisementRatingId>, UserAdvertisementRatingRepositoryCustom {
     List<UserAdvertisementRating> findByUser(User user);    // returns user ratings
 }
