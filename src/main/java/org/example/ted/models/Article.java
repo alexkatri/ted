@@ -1,6 +1,7 @@
 package org.example.ted.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,9 +37,13 @@ public class Article {
     private String multimediaPath;
 
     @OneToMany(mappedBy = "article")
+    @JsonIgnoreProperties("article")
+    @JsonIgnore
     private Set<Comment> comments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "article")
+    @JsonIgnoreProperties("article")
+    @JsonIgnore
     private Set<Like> likes = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "article")

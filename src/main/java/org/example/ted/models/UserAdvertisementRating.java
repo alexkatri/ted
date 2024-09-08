@@ -19,13 +19,13 @@ public class UserAdvertisementRating {
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties("userAdvertisementMatrices")
+    @JsonIgnoreProperties("userAdvertisementRatings")
     private User user;
 
     @MapsId("advertisementId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "advertisement_id", nullable = false)
-    @JsonIgnoreProperties("userAdvertisementMatrices")
+    @JsonIgnoreProperties("userAdvertisementRatings")
     private Advertisement advertisement;
 
     @ColumnDefault("0")

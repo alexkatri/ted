@@ -1,5 +1,6 @@
 package org.example.ted.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,10 +31,13 @@ public class Advertisement {
     @JoinTable(name = "advertisement_requests",
             joinColumns = @JoinColumn(name = "advertisement_id"),
             inverseJoinColumns = @JoinColumn(name = "request_user"))
+    @JsonIgnoreProperties("advertisement_requests")
+    @JsonIgnore
     private Set<User> request_users = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "advertisement")
     @JsonIgnoreProperties("advertisement")
+    @JsonIgnore
     private Set<UserAdvertisementRating> userAdvertisementRatings = new LinkedHashSet<>();
 
     public Advertisement() {

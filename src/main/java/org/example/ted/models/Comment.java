@@ -17,6 +17,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "article_id", nullable = false)
+    @JsonIgnoreProperties("comments")
     private Article article;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)

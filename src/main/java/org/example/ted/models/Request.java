@@ -22,7 +22,7 @@ public class Request {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "receiver", nullable = false)
-    @JsonIgnoreProperties("received_requests")
+    @JsonIgnoreProperties({"received_requests"})
     private User receiver;
 
 }

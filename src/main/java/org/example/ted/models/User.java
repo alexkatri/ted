@@ -1,5 +1,6 @@
 package org.example.ted.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,23 +34,28 @@ public class User {
     private String phoneNumber;
 
     @ManyToMany(mappedBy = "request_users")
-    @JsonIgnoreProperties("request_users")
+    @JsonIgnoreProperties({"request_users", "createdBy"})
+    @JsonIgnore
     private Set<Advertisement> advertisement_requests = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnoreProperties("user")
+    @JsonIgnoreProperties({"user", "connection_user"})
+    @JsonIgnore
     private Set<Connection> connect = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "connection_user")
-    @JsonIgnoreProperties("connection_user")
+    @JsonIgnoreProperties({"connection_user", "user"})
+    @JsonIgnore
     private Set<Connection> connected = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "receiver")
     @JsonIgnoreProperties("receiver")
+    @JsonIgnore
     private Set<Notification> received_notification = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "sender")
     @JsonIgnoreProperties("sender")
+    @JsonIgnore
     private Set<Notification> sent_notification = new LinkedHashSet<>();
 
     @OneToOne(mappedBy = "createdBy")
@@ -57,11 +63,13 @@ public class User {
     private Profile profile;
 
     @OneToMany(mappedBy = "sender")
-    @JsonIgnoreProperties("sender")
+    @JsonIgnoreProperties({"sender", "receiver"})
+    @JsonIgnore
     private Set<Request> sent_requests = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "receiver")
-    @JsonIgnoreProperties("receiver")
+    @JsonIgnoreProperties({"receiver", "sender"})
+    @JsonIgnore
     private Set<Request> received_requests = new LinkedHashSet<>();
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
@@ -73,23 +81,28 @@ public class User {
     private Image image;
 
     @OneToMany(mappedBy = "createdBy")
-    @JsonIgnoreProperties("createdBy")
+    @JsonIgnoreProperties({"createdBy", "request_users"})
+    @JsonIgnore
     private Set<Advertisement> advertisements = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties("createdBy")
+    @JsonIgnore
     private Set<Article> articles = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties("createdBy")
+    @JsonIgnore
     private Set<Comment> comments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties("createdBy")
+    @JsonIgnore
     private Set<Like> likes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties("user")
+    @JsonIgnore
     private Set<UserAdvertisementRating> userAdvertisementRatings = new LinkedHashSet<>();
 
     @ManyToMany

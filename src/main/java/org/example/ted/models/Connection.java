@@ -17,12 +17,12 @@ public class Connection {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "user", nullable = false)
-    @JsonIgnoreProperties("connect")
+    @JsonIgnoreProperties({"connect", "connected"})
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "connection_user", nullable = false)
-    @JsonIgnoreProperties("connected")
+    @JsonIgnoreProperties({"connected", "connect"})
     private User connection_user;
 
 }

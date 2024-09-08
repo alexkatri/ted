@@ -40,12 +40,13 @@ public class AuthController {
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
-                          PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, RoleRepository roleRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
+                          PasswordEncoder passwordEncoder, JWTGenerator jwtGenerator, RoleRepository roleRepository, AdvertisementRepository advertisementRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
         this.roleRepository = roleRepository;
+        this.advertisementRepository = advertisementRepository;
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
     }
 
