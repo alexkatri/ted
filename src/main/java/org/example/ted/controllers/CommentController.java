@@ -1,9 +1,13 @@
 package org.example.ted.controllers;
 
+import org.example.ted.exceptions.ArticleNotFoundException;
 import org.example.ted.exceptions.CommentNotFoundException;
+import org.example.ted.exceptions.UserNotFoundException;
+import org.example.ted.models.Article;
 import org.example.ted.models.Comment;
 import org.example.ted.models.Notification;
 import org.example.ted.models.User;
+import org.example.ted.repositories.ArticleRepository;
 import org.example.ted.repositories.CommentRepository;
 import org.example.ted.repositories.NotificationRepository;
 import org.example.ted.repositories.UserRepository;
@@ -17,11 +21,13 @@ public class CommentController {
 
     private final CommentRepository repository;
     private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
     private NotificationRepository notificationRepository;
 
-    CommentController(CommentRepository repository, UserRepository userRepository) {
+    CommentController(CommentRepository repository, UserRepository userRepository, ArticleRepository articleRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.articleRepository = articleRepository;
     }
 
     // Aggregate root
@@ -33,14 +39,20 @@ public class CommentController {
 
     @GetMapping("/user/{id}")
     List<Comment> allByUser(@PathVariable(value = "id") long id) {
-        User createdBy = userRepository.findById(id).get();
+        User createdBy = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return repository.findByCreatedBy(createdBy);
+    }
+
+    @GetMapping("/article/{id}")
+    List<Comment> allByArticle(@PathVariable(value = "id") long id) {
+        Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        return repository.findByArticle(article);
     }
 
     @PostMapping
     Comment newComment(@RequestBody Comment newComment) {
         notificationRepository.save(new Notification(newComment.getArticle().getCreatedBy(), newComment.getCreatedBy(), "" +
-                "new comment"));
+                "comment"));
         return repository.save(newComment);
     }
 

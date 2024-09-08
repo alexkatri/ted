@@ -72,7 +72,7 @@ public class AdvertisementController {
             advertisement.setRequest_users(request_users);
             repository.save(advertisement);
             notificationRepository.save(new Notification(advertisement.getCreatedBy(), requestedBy,
-                    "new advertisement request"));
+                    "advertisement request"));
         });
         return repository.findById(id).get();
     }

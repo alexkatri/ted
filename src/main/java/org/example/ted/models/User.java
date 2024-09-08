@@ -15,7 +15,7 @@ import java.util.Set;
 public class User {
     @Id
     @Column(name = "id", nullable = false)
-    private long id;
+    private int id;
 
     @Column(name = "email", nullable = false, length = 60)
     private String email;

@@ -30,11 +30,6 @@ public class WebSecurity {
         this.jwtAuthEntryPoint = jwtAuthEntryPoint;
     }
 
-//    @Bean
-//    PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -49,9 +44,10 @@ public class WebSecurity {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/ted/auth/**").permitAll()
-                .requestMatchers("/images/**").permitAll()
-                .requestMatchers("/articles/**").permitAll()
-                .requestMatchers("/advertisements/**").permitAll()
+//                .requestMatchers("/images/**").permitAll()
+//                .requestMatchers("/articles/**").permitAll()
+//                .requestMatchers("/advertisements/**").permitAll()
+//                .requestMatchers("/recommendations/**").permitAll()
 //                .requestMatchers("/users/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()

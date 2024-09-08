@@ -73,10 +73,10 @@ public class AuthController {
 //        user.setRoles(Collections.singletonList(roles));
         user.setRoles(Collections.singleton(roles));
 
+        // rate 0 (not visited) all the advertisements
         userRepository.save(user);
         for (int i = 1; i <= advertisementRepository.count(); i++) {
-            userAdvertisementRatingRepository.save(new UserAdvertisementRating(user, advertisementRepository.findById((long) i)));
-
+            userAdvertisementRatingRepository.save(new UserAdvertisementRating(user, advertisementRepository.findById((long) i).get(), 0, "unknown"));
         }
         return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);
     }

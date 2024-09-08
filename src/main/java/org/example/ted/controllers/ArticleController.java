@@ -1,6 +1,7 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ArticleNotFoundException;
+import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.*;
 import org.example.ted.repositories.ArticleRepository;
 import org.example.ted.repositories.UserRepository;
@@ -34,7 +35,7 @@ public class ArticleController {
 
     @GetMapping("/user/{id}")
     List<Article> allByUser(@PathVariable(value = "id") long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return repository.findByCreatedBy(user).stream().sorted().toList();
     }
 

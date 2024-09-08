@@ -7,6 +7,7 @@ import org.example.ted.models.Advertisement;
 import org.example.ted.models.Comment;
 import org.example.ted.models.Like;
 import org.example.ted.models.User;
+import org.example.ted.recommendation.MatrixFactorization;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
     EntityManager entityManager;
 
     @Override
-    public List<Advertisement> getUserRecommendations(User user) {
+    public List<Advertisement> getKnownAdvertisements(User user) {
         Query query = entityManager.createQuery("SELECT a FROM UserAdvertisementRating r, Advertisement a " +
                 "WHERE r.advertisement = a AND " +
                 "r.user = ?1 AND r.value >= 1 and r.state = ?2");
@@ -28,5 +29,11 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
         query.setParameter(2, "unknown");
         List<Advertisement> recommendations = query.getResultList();
         return recommendations;
+    }
+
+    @Override
+    public double[][] getMatrix(int K) {
+        MatrixFactorization matrixFactorization = new MatrixFactorization();
+        return matrixFactorization.factorization(K);
     }
 }

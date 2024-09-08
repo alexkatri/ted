@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.ted.models.Advertisement;
+import org.example.ted.models.User;
 import org.example.ted.models.UserAdvertisementRating;
 import org.example.ted.models.UserAdvertisementRatingId;
 import org.example.ted.repositories.AdvertisementRepository;
@@ -29,10 +30,20 @@ public class MatrixFactorization {
     private AdvertisementRepository advertisementRepository;
     private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
 
+    public MatrixFactorization(UserRepository userRepository, AdvertisementRepository advertisementRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
+        this.userRepository = userRepository;
+        this.advertisementRepository = advertisementRepository;
+        this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
+    }
+
     public double[][] factorization(int K) {
 
         int rows = (int) userRepository.count();
         int cols = (int) advertisementRepository.count();
+        // no users or no items
+        if (rows == 0 || cols == 0) {
+            return null;
+        }
 
         // V , F initialization
         this.V = matrixInitialization(rows, K);
@@ -63,29 +74,39 @@ public class MatrixFactorization {
         //
 
         // error computation
-        double eij;
-        for (int i = 1; i <= rows; i++) {
-            for (int j = 1; j <= cols; j++) {
-                // gain data from database for R[i][j]
-                Optional<UserAdvertisementRating> Rij = userAdvertisementRatingRepository.findById(new UserAdvertisementRatingId(i, j));
-                if (Rij.get().getValue().equals("known")) {
-                    r[i][j] = Rij.get().getValue();
-                    continue;
-                }
-
-                eij = R[i][j] - r[i][j];
-                int reps = 0;
-                while (eij > 0.1 && reps < 5) {
-                    for (int k = 1; k <= K; k++) {
-                        V[i][k] = (int) (V[i][k] + (h * 2 * eij * F[k][j]));
-                        F[k][j] = (int) (F[k][j] + (h * 2 * eij * V[i][k]));
-                    }
-                    r[i][j] = cellMultiplication(V, F, i, j, K);
-                    eij = R[i][j] - r[i][j];
-                    reps++;
-                }
-            }
-        }
+//        double eij;
+//        for (int i = 1; i <= rows; i++) {
+//            User user = userRepository.findById(i).orElse(null);
+//            if (user == null) {
+//                break;
+//            }
+//            List<Advertisement> knownAdvertisements = userAdvertisementRatingRepository.getKnownAdvertisements(user);
+//            for (int j = 1; j <= cols; j++) {
+//                // gain data from database for R[i][j]
+//                Advertisement ad = advertisementRepository.findById((long) j).get();
+//                if (ad == null) {
+//                    break;
+//                }
+//                if (knownAdvertisements.contains(ad)) {
+//                    R[i][j] = 1.0;
+//                    continue;
+//                } else {
+//                    R[i][j] = 0.0;
+//                }
+//
+//                eij = R[i][j] - r[i][j];
+//                int reps = 0;
+//                while (eij > 0.1 && reps < 5) {
+//                    for (int k = 1; k <= K; k++) {
+//                        V[i][k] = (int) (V[i][k] + (h * 2 * eij * F[k][j]));
+//                        F[k][j] = (int) (F[k][j] + (h * 2 * eij * V[i][k]));
+//                    }
+//                    r[i][j] = cellMultiplication(V, F, i, j, K);
+//                    eij = R[i][j] - r[i][j];
+//                    reps++;
+//                }
+//            }
+//        }
         return r;
     }
 

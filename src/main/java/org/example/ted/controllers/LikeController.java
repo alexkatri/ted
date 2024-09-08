@@ -1,16 +1,11 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.AdvertisementNotFoundException;
+import org.example.ted.exceptions.ArticleNotFoundException;
 import org.example.ted.exceptions.LikeNotFoundException;
 import org.example.ted.exceptions.UserNotFoundException;
-import org.example.ted.models.Advertisement;
-import org.example.ted.models.Like;
-import org.example.ted.models.Notification;
-import org.example.ted.models.User;
-import org.example.ted.repositories.AdvertisementRepository;
-import org.example.ted.repositories.LikeRepository;
-import org.example.ted.repositories.NotificationRepository;
-import org.example.ted.repositories.UserRepository;
+import org.example.ted.models.*;
+import org.example.ted.repositories.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +15,14 @@ import java.util.List;
 public class LikeController {
 
     private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
     private LikeRepository repository;
     private NotificationRepository notificationRepository;
 
-    LikeController(LikeRepository repository, UserRepository userRepository) {
+    LikeController(LikeRepository repository, UserRepository userRepository, ArticleRepository articleRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.articleRepository = articleRepository;
     }
 
     // Aggregate root
@@ -41,10 +38,16 @@ public class LikeController {
         return repository.findByCreatedBy(createdBy);
     }
 
+    @GetMapping("/article/{id}")
+    List<Like> allByArticle(@PathVariable(value = "id") long id) {
+        Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        return repository.findByArticle(article);
+    }
+
     @PostMapping
     Like newLike(@RequestBody Like newLike) {
         notificationRepository.save(new Notification(newLike.getArticle().getCreatedBy(), newLike.getCreatedBy(),
-                "new like"));
+                "like"));
         return repository.save(newLike);
     }
 
