@@ -3,8 +3,11 @@ package org.example.ted.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.example.ted.models.User;
+import org.example.ted.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -15,13 +18,22 @@ import static org.example.ted.security.SecurityConstants.SECRET;
 
 @Component
 public class JWTGenerator {
+    private final UserRepository userRepository;
+
+    public JWTGenerator(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public String generateJWT(Authentication authentication) {
         String email = authentication.getName();
         Date now = new Date();
         Date expiration = new Date(now.getTime() + SecurityConstants.EXPIRATION_TIME);
+        User user = userRepository.findByEmail(email).orElse(null);
+        long id = user.getId();
 
         String token = Jwts.builder()
                 .setSubject(email)
+                .setId(String.valueOf(id))
                 .setIssuedAt(new Date())
                 .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.HS512, SECRET)
