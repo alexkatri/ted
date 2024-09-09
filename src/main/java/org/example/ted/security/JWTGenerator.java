@@ -33,7 +33,7 @@ public class JWTGenerator {
 
         String token = Jwts.builder()
                 .setSubject(email)
-                .setId(String.valueOf(id))
+                .claim("user_id", id)
                 .setIssuedAt(new Date())
                 .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.HS512, SECRET)
