@@ -26,7 +26,8 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 //    }
 
     @Override
-    public List<Article> userFeed(User user_email) {
+    public List<Article> userFeed(int id) {
+        User user = entityManager.find(User.class, id);
         Query query = entityManager.createQuery("SELECT a FROM Article a WHERE a in (" +
                 "SELECT a " +
                 "FROM Article a " +
@@ -41,7 +42,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 "((con.user = ?1 AND l.createdBy = con.connection_user) OR " +
                 "(con.connection_user = ?1 AND l.createdBy = con.user)))" +
                 "order by a.date desc");
-        query.setParameter(1, user_email);
+        query.setParameter(1, user);
         List<Article> articles = query.getResultList();
         return articles;
     }

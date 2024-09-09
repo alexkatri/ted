@@ -48,7 +48,8 @@ public class ArticleController {
         String user_email = JWTgenerator.getEmailFromJWT(token);
         Optional<User> user = userRepository.findByEmail(user_email);
         User userEntity = user.get();
-        return repository.userFeed(userEntity);
+        int userId = userEntity.getId();
+        return repository.userFeed(userId);
     }
 
     @PostMapping
