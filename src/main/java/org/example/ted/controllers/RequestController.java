@@ -34,7 +34,7 @@ public class RequestController {
 
     @PostMapping
     Request newRequest(@RequestBody Request newRequest) {
-        notificationRepository.save(new Notification(newRequest.getReceiver(), newRequest.getSender(), "request"));
+//        notificationRepository.save(new Notification(newRequest.getReceiver(), newRequest.getSender(), "request"));
         return repository.save(newRequest);
     }
 

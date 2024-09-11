@@ -44,6 +44,7 @@ public class WebSecurity {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/ted/auth/**").permitAll()
+                .requestMatchers("/recommendations/**").permitAll()
 //                .requestMatchers("/images/**").permitAll()
 //                .requestMatchers("/articles/**").permitAll()
 //                .requestMatchers("/advertisements/**").permitAll()

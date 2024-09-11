@@ -1,10 +1,7 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.AdvertisementNotFoundException;
-import org.example.ted.models.Advertisement;
-import org.example.ted.models.Notification;
-import org.example.ted.models.User;
-import org.example.ted.models.UserAdvertisementRating;
+import org.example.ted.models.*;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.NotificationRepository;
 import org.example.ted.repositories.UserAdvertisementRatingRepository;
@@ -98,8 +95,11 @@ public class AdvertisementController {
             return null;
         }
         User userEntity = user.get();
-        if (repository.existsById(id)) {
-            userAdvertisementRatingRepository.save(new UserAdvertisementRating(userEntity, repository.findById(id).get(), 1, "known"));
+        Advertisement advertisement = repository.findById(id).get();
+        UserAdvertisementRatingId userAdvertisementRatingId = new UserAdvertisementRatingId(userEntity.getId(), advertisement.getId());
+        if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(userEntity, advertisement)) {
+            userAdvertisementRatingRepository.save(new UserAdvertisementRating(userAdvertisementRatingId, userEntity, advertisement,
+                    1, "known"));
         }
         return repository.findById(id).orElseThrow(() -> new AdvertisementNotFoundException(id));
     }
