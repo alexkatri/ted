@@ -7,6 +7,7 @@ import org.example.ted.repositories.NotificationRepository;
 import org.example.ted.repositories.UserAdvertisementRatingRepository;
 import org.example.ted.repositories.UserRepository;
 import org.example.ted.security.JWTGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,12 +24,13 @@ public class AdvertisementController {
     private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
     private JWTGenerator JWTgenerator;
 
+    @Autowired
     AdvertisementController(AdvertisementRepository repository, NotificationRepository notificationRepository, UserRepository userRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository, JWTGenerator jwTgenerator) {
         this.repository = repository;
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
-        JWTgenerator = jwTgenerator;
+        this.JWTgenerator = jwTgenerator;
     }
 
     // Aggregate root
@@ -99,7 +101,7 @@ public class AdvertisementController {
         UserAdvertisementRatingId userAdvertisementRatingId = new UserAdvertisementRatingId(userEntity.getId(), advertisement.getId());
         if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(userEntity, advertisement)) {
             userAdvertisementRatingRepository.save(new UserAdvertisementRating(userAdvertisementRatingId, userEntity, advertisement,
-                    1, "known"));
+                    1));
         }
         return repository.findById(id).orElseThrow(() -> new AdvertisementNotFoundException(id));
     }

@@ -81,7 +81,7 @@ public class AuthController {
         // rate 0 (not visited) all the advertisements
         userRepository.save(user);
         for (int i = 1; i <= advertisementRepository.count(); i++) {
-            userAdvertisementRatingRepository.save(new UserAdvertisementRating(user, advertisementRepository.findById((long) i).get(), 0, "unknown"));
+            userAdvertisementRatingRepository.save(new UserAdvertisementRating(user, advertisementRepository.findById((long) i).get(), 0));
         }
         return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);
     }

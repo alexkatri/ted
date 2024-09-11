@@ -1,26 +1,30 @@
 package org.example.ted.controllers;
 
-import org.example.ted.exceptions.UserNotFoundException;
+import org.example.ted.models.Advertisement;
 import org.example.ted.models.User;
+import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.UserAdvertisementRatingRepository;
 import org.example.ted.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/recommendations")
-public class MatrixFactorizationController {
+public class RecommendationController {
 
-    private final UserAdvertisementRatingRepository userAdvertisementRatingRepository;
+    UserRepository userRepository;
+    AdvertisementRepository advertisementRepository;
+    UserAdvertisementRatingRepository userAdvertisementRatingRepository;
 
-    public MatrixFactorizationController(UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
+    @Autowired
+    public RecommendationController(UserRepository userRepository, AdvertisementRepository advertisementRepository,
+            UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
+        this.userRepository = userRepository;
+        this.advertisementRepository = advertisementRepository;
     }
-
-//    MatrixFactorizationController(UserRepository repository) {
-//        this.repository = repository;
-//    }
 
     // Aggregate root
 
@@ -28,7 +32,26 @@ public class MatrixFactorizationController {
     double[][] getMatrixFactorization() {
         return userAdvertisementRatingRepository.getMatrix(5);
     }
-//
+
+    @GetMapping("/user/{id}")
+    List<Advertisement> getUserRecommendedAdvertisements(@PathVariable int id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        return userAdvertisementRatingRepository.getRecommendedAdvertisementsByUser(user);
+    }
+
+//    @PostMapping("/initialize")
+//    void initialize() {
+//        for (User user : userRepository.findAll()) {
+//            for (Advertisement advertisement : advertisementRepository.findAll()) {
+//                UserAdvertisementRatingId userAdvertisementRatingId = new UserAdvertisementRatingId(user.getId(), advertisement.getId());
+//                userAdvertisementRatingRepository.save(new UserAdvertisementRating(userAdvertisementRatingId, user, advertisement, 0, "unknown"));
+//            }
+//        }
+//    }
+
 //    @PostMapping
 //    User newUser(@RequestBody User newUser) {
 //        return repository.save(newUser);

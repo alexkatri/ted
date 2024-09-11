@@ -32,10 +32,6 @@ public class UserAdvertisementRating {
     @Column(name = "value", nullable = false)
     private Integer value;
 
-    @ColumnDefault("unknown")
-    @Column(name = "state", nullable = false, length = 45)
-    private String state;
-
     public UserAdvertisementRating(User user, Advertisement advertisement) {
         this.user = user;
         this.advertisement = advertisement;
@@ -50,10 +46,16 @@ public class UserAdvertisementRating {
         this.advertisement = byId.orElse(null);
     }
 
-    public UserAdvertisementRating(User user, Advertisement advertisement, Integer value, String state) {
+    public UserAdvertisementRating(User user, Advertisement advertisement, Integer value) {
         this.user = user;
         this.advertisement = advertisement;
         this.value = value;
-        this.state = state;
+    }
+
+    public UserAdvertisementRating(UserAdvertisementRatingId userAdvertisementRatingId, User userEntity, Advertisement advertisement, int value) {
+        this.id = userAdvertisementRatingId;
+        this.user = userEntity;
+        this.advertisement = advertisement;
+        this.value = value;
     }
 }

@@ -8,6 +8,7 @@ import org.example.ted.recommendation.MatrixFactorization;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -60,4 +61,11 @@ public class TedApplication {
 			}
 		};
 	}
+
+//	@Bean
+//	public double[][] matrixFactorization() {
+//		MatrixFactorization matrixFactorization = new MatrixFactorization();
+//		double[][] R = matrixFactorization.factorization(5);
+//		return R;
+//	}
 }

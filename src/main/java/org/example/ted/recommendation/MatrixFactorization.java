@@ -6,31 +6,35 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.ted.models.Advertisement;
 import org.example.ted.models.User;
-import org.example.ted.models.UserAdvertisementRating;
-import org.example.ted.models.UserAdvertisementRatingId;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.UserAdvertisementRatingRepository;
 import org.example.ted.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Random;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Component
 public class MatrixFactorization {
     private double[][] R;
     private double[][] V;
     private double[][] F;
     private double[][] r;
-    private double h = 0.0002;
+    private double h = 0.5;
+
     private UserRepository userRepository;
     private AdvertisementRepository advertisementRepository;
     private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
 
-    public MatrixFactorization(UserRepository userRepository, AdvertisementRepository advertisementRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
+    @Autowired
+    public MatrixFactorization(UserRepository userRepository, AdvertisementRepository advertisementRepository, @Lazy UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
         this.userRepository = userRepository;
         this.advertisementRepository = advertisementRepository;
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
@@ -47,67 +51,43 @@ public class MatrixFactorization {
 
         // V , F initialization
         this.V = matrixInitialization(rows, K);
-        for (int i = 1; i <= rows; i++) {
-            for (int j = 1; j <= K; j++) {
-                System.out.print(V[i][j] + " ");
-            }
-            System.out.println();
-        }
         this.F = matrixInitialization(K, cols);
-        for (int i = 1; i <= K; i++) {
-            for (int j = 1; j <= cols; j++) {
-                System.out.print(F[i][j] + " ");
-            }
-            System.out.println();
-        }
 
         // matrix multiplication
         this.r = multiplication(V, F, rows, cols, K);
-        for (int i = 1; i <= rows; i++) {
-            for (int j = 1; j <= cols; j++) {
-                System.out.print(r[i][j] + " ");
-            }
-            System.out.println();
-        }
 
-        // get R from database
-        //
+        this.R = new double[rows+1][cols+1];
 
         // error computation
-//        double eij;
-//        for (int i = 1; i <= rows; i++) {
-//            User user = userRepository.findById(i).orElse(null);
-//            if (user == null) {
-//                break;
-//            }
-//            List<Advertisement> knownAdvertisements = userAdvertisementRatingRepository.getKnownAdvertisements(user);
-//            for (int j = 1; j <= cols; j++) {
-//                // gain data from database for R[i][j]
-//                Advertisement ad = advertisementRepository.findById((long) j).get();
-//                if (ad == null) {
-//                    break;
-//                }
-//                if (knownAdvertisements.contains(ad)) {
-//                    R[i][j] = 1.0;
-//                    continue;
-//                } else {
-//                    R[i][j] = 0.0;
-//                }
-//
-//                eij = R[i][j] - r[i][j];
-//                int reps = 0;
-//                while (eij > 0.1 && reps < 5) {
-//                    for (int k = 1; k <= K; k++) {
-//                        V[i][k] = (int) (V[i][k] + (h * 2 * eij * F[k][j]));
-//                        F[k][j] = (int) (F[k][j] + (h * 2 * eij * V[i][k]));
-//                    }
-//                    r[i][j] = cellMultiplication(V, F, i, j, K);
-//                    eij = R[i][j] - r[i][j];
-//                    reps++;
-//                }
-//            }
-//        }
-        return r;
+        double eij = 0;
+        for (int i = 1; i <= rows; i++) {
+            User user = userRepository.findById(i).orElse(null);
+            for (int j = 1; j <= cols; j++) {
+                Advertisement ad = advertisementRepository.findById((long) j).orElse(null);
+                if (ad == null) {
+                    R[i][j] = 0;
+                    continue;
+                }
+                // gain data from database for R[i][j]
+                if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(user, ad)) {    // user has not visited ad
+                    R[i][j] = r[i][j];
+                } else {    // user has visited ad
+                    R[i][j] = 1;
+
+                    eij = Math.abs(R[i][j] - r[i][j]);
+                    int reps = 0;
+                    while (eij >= 0.5 && reps++ < 5) {
+                        for (int k = 1; k <= K; k++) {
+                            V[i][k] = (int) (V[i][k] + (h * 2 * eij * F[k][j]));
+                            F[k][j] = (int) (F[k][j] + (h * 2 * eij * V[i][k]));
+                        }
+                        r[i][j] = cellMultiplication(V, F, i, j, K);
+                        eij = R[i][j] - r[i][j];
+                    }
+                }
+            }
+        }
+        return R;
     }
 
     public double[][] multiplication(double[][] V, double[][] F, int rows, int cols, int K) {
@@ -117,6 +97,9 @@ public class MatrixFactorization {
                 r[i][j] = 0;
                 for (int k = 1; k <= K; k++) {
                     r[i][j] += V[i][k] * F[k][j];
+                }
+                if (r[i][j] >= 1) {
+                    r[i][j] = 1;
                 }
             }
         }
@@ -128,25 +111,32 @@ public class MatrixFactorization {
         for (int k = 1; k <= K; k++) {
             r += V[i][k] * F[k][j];
         }
+        if (r >= 1) {
+            r = 1;
+        }
+        else {
+            r = 0;
+        }
         return r;
     }
 
     public double[][] matrixInitialization(int rows, int cols) {
+        Random rand = new Random();
         double[][] matrix = new double[rows+1][cols+1];
         for (int i = 0; i <= rows; i++) {
             for (int j = 0; j <= cols; j++) {
-                matrix[i][j] = (Math.random() * 10);
+                matrix[i][j] = Math.abs(rand.nextInt() % 2);
             }
         }
         return matrix;
     }
 
-    public double setRij(int i, int j, double value) {
-        this.R[i][j] = value;
-        return R[i][j];
-    }
+//    public double setRij(int i, int j, double value) {
+//        this.R[i][j] = value;
+//        return R[i][j];
+//    }
 
-    public double[] getVector(double[][] R, int row) {
+    public double[] getUserVector(double[][] R, int row) {
         double[] vector;
         vector = R[row].clone();
         return vector;
@@ -154,12 +144,14 @@ public class MatrixFactorization {
 
     public List<Advertisement> getAdvertisements(int user_id) {
         List<Advertisement> advertisements = new ArrayList<>();
-        double[] vector = getVector(R, user_id);
+        double[] vector = getUserVector(R, user_id);
         for (int i = 1; i <= vector.length; i++) {
             if (vector[i] > 0) {
-                Advertisement ad = advertisementRepository.findById(Long.valueOf(i)).get();
+                Advertisement ad = advertisementRepository.findById(Long.valueOf(i)).orElse(null);
                 // if ad not exists in viewed ads by user[user_id]
-                advertisements.add(ad);
+                if (ad != null) {
+                    advertisements.add(ad);
+                }
             }
         }
         return advertisements;

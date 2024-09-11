@@ -7,6 +7,9 @@ import org.example.ted.models.User;
 import java.util.List;
 
 public interface UserAdvertisementRatingRepositoryCustom {
-    List<Advertisement> getKnownAdvertisements(User user);
+    // returns list of the advertisements visited by "user"
+    List<Advertisement> getKnownAdvertisementsByUser(User user);
+    // returns factorized matrix r
     double[][] getMatrix(int K);
+    List<Advertisement> getRecommendedAdvertisementsByUser(User user);
 }
