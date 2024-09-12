@@ -19,13 +19,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/ted/auth")
@@ -37,6 +40,8 @@ public class AuthController {
     private JWTGenerator jwtGenerator;
     private AdvertisementRepository advertisementRepository;
     private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
+
+    private static String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
@@ -75,14 +80,14 @@ public class AuthController {
                 registerDto.getName(), registerDto.getSurname(), registerDto.getPhone());
 
         Role roles = roleRepository.findByName("USER").get();
-//        user.setRoles(Collections.singletonList(roles));
         user.setRoles(Collections.singleton(roles));
+
+        // set user image
+        Path path = Paths.get(UPLOAD_FOLDER + "/" + "userPhoto.jpg");
+        user.setImagePath(path.toString());
 
         // rate 0 (not visited) all the advertisements
         userRepository.save(user);
-        for (int i = 1; i <= advertisementRepository.count(); i++) {
-            userAdvertisementRatingRepository.save(new UserAdvertisementRating(user, advertisementRepository.findById((long) i).get(), 0));
-        }
         return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);
     }
 }

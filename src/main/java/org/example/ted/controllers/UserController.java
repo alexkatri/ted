@@ -5,7 +5,6 @@ import org.example.ted.models.User;
 import org.example.ted.repositories.UserRepository;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,46 +36,6 @@ public class UserController {
         return repository.findAll();
     }
 
-    @PostMapping
-    User newUser(@RequestBody User newUser) {
-        return repository.save(newUser);
-    }
-
-    // image upload
-    @PostMapping("/image_upload/{id}")
-    public String singleFileUpload(@PathVariable long id, @RequestParam("file") MultipartFile file) {
-
-        if (file.isEmpty()) {
-            return "Please select a file to upload";
-        }
-
-        try {
-
-            // Get the file and save it somewhere
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOAD_FOLDER
-                    + "/"
-                    + file.getOriginalFilename()
-                    .substring(0, file.getOriginalFilename().lastIndexOf('.'))
-                    + new Random().nextInt(1 << 20)
-                    + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
-            );
-            Files.write(path, bytes);
-
-            User user = repository.findById(id).get();
-            user.setImagePath(path.toString());
-            repository.save(user);
-
-//            redirectAttributes.addFlashAttribute("message",
-//                    "You successfully uploaded '" + file.getOriginalFilename() + "'");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return "Successfully uploaded " + file.getOriginalFilename();
-    }
-
     // Single item
 
     @GetMapping("{id}")
@@ -92,6 +51,42 @@ public class UserController {
         Resource resource = new FileSystemResource(imagePath.toFile());
         String contentType = Files.probeContentType(imagePath);
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
+    }
+
+    @PostMapping
+    User newUser(@RequestBody User newUser) {
+        Path path = Paths.get(UPLOAD_FOLDER + "/" + "userPhoto.jpg");
+        newUser.setImagePath(path.toString());
+        return repository.save(newUser);
+    }
+
+    // image upload
+    @PostMapping("/image_upload/{id}")
+    public String singleFileUpload(@PathVariable long id, @RequestParam("file") MultipartFile file) {
+
+        if (file.isEmpty()) {
+            return "Please select a file to upload";
+        }
+
+        try {
+            // Get the file and save it somewhere
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(UPLOAD_FOLDER
+                    + "/"
+                    + file.getOriginalFilename()
+                    .substring(0, file.getOriginalFilename().lastIndexOf('.'))
+                    + new Random().nextInt(1 << 20)
+                    + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
+            );
+            Files.write(path, bytes);
+
+            User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+            user.setImagePath(path.toString());
+            repository.save(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Successfully uploaded " + file.getOriginalFilename();
     }
 
     @PutMapping("{id}")
