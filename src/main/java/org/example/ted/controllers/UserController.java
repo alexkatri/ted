@@ -4,14 +4,22 @@ import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.User;
 import org.example.ted.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserRepository repository;
+
+    private static String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
 
     UserController(UserRepository repository) {
         this.repository = repository;
@@ -27,6 +35,44 @@ public class UserController {
     @PostMapping
     User newUser(@RequestBody User newUser) {
         return repository.save(newUser);
+    }
+
+    // image upload
+    @PostMapping("/image_upload/{id}")
+    public String singleFileUpload(@PathVariable long id, @RequestParam("file") MultipartFile file) {
+
+        if (file.isEmpty()) {
+            return "Please select a file to upload";
+        }
+
+        try {
+
+            // Get the file and save it somewhere
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(UPLOAD_FOLDER
+                    + "/"
+                    + file.getOriginalFilename()
+                    .substring(0, file.getOriginalFilename().lastIndexOf('.'))
+                    + new Random().nextInt(1 << 20)
+                    + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
+            );
+//            Path path = Paths.get(UPLOAD_FOLDER + "/"
+//                    + file.getOriginalFilename()
+//            );
+            Files.write(path, bytes);
+
+            User user = repository.findById(id).get();
+            user.setImagePath(path.toString());
+            repository.save(user);
+
+//            redirectAttributes.addFlashAttribute("message",
+//                    "You successfully uploaded '" + file.getOriginalFilename() + "'");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "Successfully uploaded " + file.getOriginalFilename();
     }
 
     // Single item

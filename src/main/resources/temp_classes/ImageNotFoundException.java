@@ -1,6 +1,4 @@
-package org.example.ted.exceptions;
-
-import org.example.ted.models.User;
+package temp_classes;
 
 public class ImageNotFoundException extends RuntimeException {
 

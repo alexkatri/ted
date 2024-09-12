@@ -1,4 +1,4 @@
-package org.example.ted.repositories;
+package temp_classes;
 
 import org.example.ted.models.Image;
 import org.example.ted.models.User;

@@ -1,7 +1,6 @@
-package org.example.ted.controllers;
+package temp_classes;
 
 import org.example.ted.exceptions.ImageNotFoundException;
-import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.Image;
 import org.example.ted.models.User;
 import org.example.ted.repositories.ImageRepository;
@@ -15,15 +14,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/images")
-public
-class ImageController {
+public class ImageController {
 
     //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "C://Users//sgt_o//IdeaProjects//ted//src//main//resources//templates";
+    private static String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
 
     private final ImageRepository repository;
     private final UserRepository userRepository;
@@ -56,8 +53,8 @@ class ImageController {
         return repository.findByUser(user);
     }
 
-    @PostMapping("upload")
-    public String singleFileUpload(@RequestParam("picture") MultipartFile file,
+    @PostMapping("/upload")
+    public String singleFileUpload(@RequestParam("image") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
 
         if (file.isEmpty()) {
@@ -69,11 +66,14 @@ class ImageController {
 
             // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOADED_FOLDER
+//            Path path = Paths.get(UPLOAD_FOLDER
+//                    + file.getOriginalFilename()
+//                    .substring(file.getOriginalFilename().lastIndexOf('/'), file.getOriginalFilename().lastIndexOf('.'))
+//                    + new Random().nextInt(1 << 20)
+//                    + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
+//            );
+            Path path = Paths.get(UPLOAD_FOLDER
                     + file.getOriginalFilename()
-                    .substring(file.getOriginalFilename().lastIndexOf('/'), file.getOriginalFilename().lastIndexOf('.'))
-                    + new Random().nextInt(1 << 20)
-                    + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
             );
             Files.write(path, bytes);
             Image img = new Image(path.toString());

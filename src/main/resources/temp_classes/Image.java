@@ -1,4 +1,4 @@
-package org.example.ted.models;
+package temp_classes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;

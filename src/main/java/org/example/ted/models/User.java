@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -32,6 +33,10 @@ public class User {
 
     @Column(name = "phone_number", length = 45)
     private String phoneNumber;
+
+    @ColumnDefault("userPhoto.jpg")
+    @Column(name = "image_path", length = 1024)
+    private String imagePath;
 
     @ManyToMany(mappedBy = "request_users")
     @JsonIgnoreProperties({"request_users", "createdBy"})
@@ -75,10 +80,6 @@ public class User {
     @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     @JsonIgnoreProperties("users")
     private Set<Role> roles = new LinkedHashSet<>();
-
-    @OneToOne(mappedBy = "user")
-    @JsonIgnoreProperties("user")
-    private Image image;
 
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties({"createdBy", "request_users"})

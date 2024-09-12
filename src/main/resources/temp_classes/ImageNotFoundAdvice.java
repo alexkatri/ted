@@ -1,4 +1,4 @@
-package org.example.ted.exceptions;
+package temp_classes;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
