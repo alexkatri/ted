@@ -47,6 +47,8 @@ public class WebSecurity {
                 .requestMatchers("/recommendations/**").permitAll()
                 .requestMatchers("/users/image_upload/**").permitAll()
                 .requestMatchers("/users/image/**").permitAll()
+                .requestMatchers("/articles/multimedia_upload/**").permitAll()
+                .requestMatchers("/articles/multimedia/**").permitAll()
 //                .requestMatchers("/images/**").permitAll()
 //                .requestMatchers("/articles/**").permitAll()
 //                .requestMatchers("/advertisements/**").permitAll()

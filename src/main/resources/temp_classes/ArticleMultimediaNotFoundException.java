@@ -1,4 +1,4 @@
-package org.example.ted.exceptions;
+package temp_classes;
 
 public class ArticleMultimediaNotFoundException extends RuntimeException {
 

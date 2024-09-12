@@ -61,9 +61,6 @@ public class UserController {
                     + new Random().nextInt(1 << 20)
                     + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
             );
-//            Path path = Paths.get(UPLOAD_FOLDER + "/"
-//                    + file.getOriginalFilename()
-//            );
             Files.write(path, bytes);
 
             User user = repository.findById(id).get();

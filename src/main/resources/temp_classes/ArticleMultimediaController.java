@@ -1,7 +1,6 @@
-package org.example.ted.controllers;
+package temp_classes;
 
 import org.example.ted.exceptions.ArticleMultimediaNotFoundException;
-import org.example.ted.models.*;
 import org.example.ted.repositories.ArticleMultimediaRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
