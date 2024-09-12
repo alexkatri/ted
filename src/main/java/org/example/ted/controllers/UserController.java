@@ -3,6 +3,11 @@ package org.example.ted.controllers;
 import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.User;
 import org.example.ted.repositories.UserRepository;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,6 +87,15 @@ public class UserController {
         return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    // get user image
+    @GetMapping("/image/{id}")
+    public ResponseEntity<Resource> getUserImage(@PathVariable long id) throws IOException {
+        User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        Path imagePath = Paths.get(user.getImagePath());
+        Resource resource = new FileSystemResource(imagePath.toFile());
+        String contentType = Files.probeContentType(imagePath);
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
+    }
 
     @PutMapping("{id}")
     User replaceUser(@RequestBody User newUser, @PathVariable long id) {
