@@ -86,7 +86,6 @@ public class AuthController {
         Path path = Paths.get(UPLOAD_FOLDER + "/" + "userPhoto.jpg");
         user.setImagePath(path.toString());
 
-        // rate 0 (not visited) all the advertisements
         userRepository.save(user);
         return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);
     }

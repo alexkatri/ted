@@ -1,10 +1,9 @@
 package org.example.ted.controllers;
 
 import org.example.ted.models.Advertisement;
+import org.example.ted.models.Article;
 import org.example.ted.models.User;
-import org.example.ted.repositories.AdvertisementRepository;
-import org.example.ted.repositories.UserAdvertisementRatingRepository;
-import org.example.ted.repositories.UserRepository;
+import org.example.ted.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,32 +13,46 @@ import java.util.List;
 @RequestMapping("/recommendations")
 public class RecommendationController {
 
-    UserRepository userRepository;
-    AdvertisementRepository advertisementRepository;
-    UserAdvertisementRatingRepository userAdvertisementRatingRepository;
+    private final UserArticleRatingRepository userArticleRatingRepository;
+    private final UserRepository userRepository;
+    private final UserAdvertisementRatingRepository userAdvertisementRatingRepository;
 
     @Autowired
-    public RecommendationController(UserRepository userRepository, AdvertisementRepository advertisementRepository,
-            UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
+    public RecommendationController(UserRepository userRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository,
+                                    UserArticleRatingRepository userArticleRatingRepository) {
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
         this.userRepository = userRepository;
-        this.advertisementRepository = advertisementRepository;
+        this.userArticleRatingRepository = userArticleRatingRepository;
     }
 
     // Aggregate root
 
-    @GetMapping
-    double[][] getMatrixFactorization() {
+    @GetMapping("/advertisement")
+    double[][] getUserAdvertisementMatrix() {
         return userAdvertisementRatingRepository.getMatrix(5);
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/advertisement/user/{id}")
     List<Advertisement> getUserRecommendedAdvertisements(@PathVariable int id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return null;
         }
         return userAdvertisementRatingRepository.getRecommendedAdvertisementsByUser(user);
+    }
+
+    @GetMapping("/article")
+    double[][] getMatrixFactorization() {
+        return userArticleRatingRepository.getMatrix();
+    }
+
+    @GetMapping("/article/user/{id}")
+    List<Article> getUserRecommendedArticles(@PathVariable int id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return null;
+        }
+        return userArticleRatingRepository.getRecommendedArticlesByUser(user);
     }
 
 //    @PostMapping("/initialize")

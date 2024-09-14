@@ -45,4 +45,9 @@ public class Article {
     @JsonIgnoreProperties("article")
     @JsonIgnore
     private Set<Like> likes = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "article")
+    @JsonIgnoreProperties("article")
+    private Set<UserArticleRating> userArticleRatings = new LinkedHashSet<>();
+
 }

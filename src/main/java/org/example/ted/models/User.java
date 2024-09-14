@@ -113,6 +113,10 @@ public class User {
     @JsonIgnoreProperties("users")
     private Set<Skill> skills = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private Set<UserArticleRating> userArticleRatings = new LinkedHashSet<>();
+
     public User() {}
     public User(String email, String password) {
         this.email = email;

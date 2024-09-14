@@ -5,14 +5,13 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.example.ted.models.Advertisement;
 import org.example.ted.models.User;
-import org.example.ted.recommendation.MatrixFactorization;
+import org.example.ted.recommendation.AdvertisementRecommendation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -21,16 +20,16 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
 
     private final UserAdvertisementRatingRepository userAdvertisementRatingRepository;
     private final AdvertisementRepository advertisementRepository;
-    private MatrixFactorization matrixFactorization;
+    private AdvertisementRecommendation advertisementRecommendation;
 
     @PersistenceContext
     EntityManager entityManager;
 
     @Autowired
-    public UserAdvertisementRatingRepositoryCustomImpl(@Lazy UserAdvertisementRatingRepository userAdvertisementRatingRepository, AdvertisementRepository advertisementRepository, MatrixFactorization matrixFactorization) {
+    public UserAdvertisementRatingRepositoryCustomImpl(@Lazy UserAdvertisementRatingRepository userAdvertisementRatingRepository, AdvertisementRepository advertisementRepository, AdvertisementRecommendation advertisementRecommendation) {
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
         this.advertisementRepository = advertisementRepository;
-        this.matrixFactorization = matrixFactorization;
+        this.advertisementRecommendation = advertisementRecommendation;
     }
 
     @Override
@@ -45,16 +44,16 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
 
     @Override
     public double[][] getMatrix(int K) {
-        return matrixFactorization.factorization(K);
+        return advertisementRecommendation.factorization(K);
     }
 
     @Override
     public List<Advertisement> getRecommendedAdvertisementsByUser(User user) {
         //
-        double[][] R = matrixFactorization.factorization(5);
+        double[][] R = advertisementRecommendation.factorization(5);
 //        System.out.println("factorization OK");
         List<Advertisement> recommendedAdvertisements = new ArrayList<>();
-        double[] userVector = matrixFactorization.getUserVector(R, user.getId());
+        double[] userVector = advertisementRecommendation.getUserVector(R, user.getId());
 //        System.out.println(Arrays.toString(userVector));
         for (int i = 1; i <= userVector.length-1; i++) {
             if (userVector[i] == 1) {

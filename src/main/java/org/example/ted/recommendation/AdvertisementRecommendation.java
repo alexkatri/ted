@@ -22,7 +22,7 @@ import java.util.Random;
 @Getter
 @Setter
 @Component
-public class MatrixFactorization {
+public class AdvertisementRecommendation {
     private double[][] R;
     private double[][] V;
     private double[][] F;
@@ -34,7 +34,7 @@ public class MatrixFactorization {
     private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
 
     @Autowired
-    public MatrixFactorization(UserRepository userRepository, AdvertisementRepository advertisementRepository, @Lazy UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
+    public AdvertisementRecommendation(UserRepository userRepository, AdvertisementRepository advertisementRepository, @Lazy UserAdvertisementRatingRepository userAdvertisementRatingRepository) {
         this.userRepository = userRepository;
         this.advertisementRepository = advertisementRepository;
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;

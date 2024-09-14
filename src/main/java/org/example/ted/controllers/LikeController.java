@@ -1,14 +1,16 @@
 package org.example.ted.controllers;
 
-import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.exceptions.ArticleNotFoundException;
 import org.example.ted.exceptions.LikeNotFoundException;
 import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.*;
 import org.example.ted.repositories.*;
+import org.example.ted.security.JWTGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/likes")
@@ -16,13 +18,17 @@ public class LikeController {
 
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
-    private LikeRepository repository;
-    private NotificationRepository notificationRepository;
+    private final LikeRepository repository;
+    private final NotificationRepository notificationRepository;
+    private final UserArticleRatingRepository userArticleRatingRepository;
 
-    LikeController(LikeRepository repository, UserRepository userRepository, ArticleRepository articleRepository) {
+    @Autowired
+    LikeController(LikeRepository repository, UserRepository userRepository, ArticleRepository articleRepository, NotificationRepository notificationRepository, UserArticleRatingRepository userArticleRatingRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.articleRepository = articleRepository;
+        this.notificationRepository = notificationRepository;
+        this.userArticleRatingRepository = userArticleRatingRepository;
     }
 
     // Aggregate root
@@ -48,6 +54,18 @@ public class LikeController {
     Like newLike(@RequestBody Like newLike) {
         notificationRepository.save(new Notification(newLike.getArticle().getCreatedBy(), newLike.getCreatedBy(),
                 "like"));
+        Article article = newLike.getArticle();
+        User user = newLike.getCreatedBy();
+        if (!userArticleRatingRepository.existsByUserAndArticle(user, article)) {
+            UserArticleRatingId userArticleRatingId = new UserArticleRatingId(user.getId(), article.getId());
+            userArticleRatingRepository.save(new UserArticleRating(userArticleRatingId, user, article, 2));
+        }
+        else {
+            UserArticleRating userArticleRating = userArticleRatingRepository.findByUserAndArticle(user, article);
+            int value = userArticleRating.getValue();
+            userArticleRating.setValue(value + 2);
+            userArticleRatingRepository.save(userArticleRating);
+        }
         return repository.save(newLike);
     }
 
