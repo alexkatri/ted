@@ -5,12 +5,10 @@ import org.example.ted.exceptions.LikeNotFoundException;
 import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.*;
 import org.example.ted.repositories.*;
-import org.example.ted.security.JWTGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/likes")
@@ -38,6 +36,14 @@ public class LikeController {
         return repository.findAll();
     }
 
+    // Single item
+    @GetMapping("{id}")
+    Like one(@PathVariable long id) {
+
+        return repository.findById(id)
+                .orElseThrow(() -> new LikeNotFoundException(id));
+    }
+
     @GetMapping("/user/{id}")
     List<Like> allByUser(@PathVariable(value = "id") long id) {
         User createdBy = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -56,6 +62,7 @@ public class LikeController {
                 "like"));
         Article article = newLike.getArticle();
         User user = newLike.getCreatedBy();
+        // update article rating
         if (!userArticleRatingRepository.existsByUserAndArticle(user, article)) {
             UserArticleRatingId userArticleRatingId = new UserArticleRatingId(user.getId(), article.getId());
             userArticleRatingRepository.save(new UserArticleRating(userArticleRatingId, user, article, 2));
@@ -67,15 +74,6 @@ public class LikeController {
             userArticleRatingRepository.save(userArticleRating);
         }
         return repository.save(newLike);
-    }
-
-    // Single item
-
-    @GetMapping("{id}")
-    Like one(@PathVariable long id) {
-
-        return repository.findById(id)
-                .orElseThrow(() -> new LikeNotFoundException(id));
     }
 
 

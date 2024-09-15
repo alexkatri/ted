@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @Transactional(readOnly = true)
@@ -20,7 +21,7 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
 
     private final UserAdvertisementRatingRepository userAdvertisementRatingRepository;
     private final AdvertisementRepository advertisementRepository;
-    private AdvertisementRecommendation advertisementRecommendation;
+    private final AdvertisementRecommendation advertisementRecommendation;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -43,22 +44,19 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
     }
 
     @Override
-    public double[][] getMatrix(int K) {
-        return advertisementRecommendation.factorization(K);
+    public double[][] getMatrix() {
+        return advertisementRecommendation.getMatrixR();
     }
 
     @Override
     public List<Advertisement> getRecommendedAdvertisementsByUser(User user) {
-        //
-        double[][] R = advertisementRecommendation.factorization(5);
-//        System.out.println("factorization OK");
+        double[][] R = advertisementRecommendation.getMatrixR();
         List<Advertisement> recommendedAdvertisements = new ArrayList<>();
         double[] userVector = advertisementRecommendation.getUserVector(R, user.getId());
-//        System.out.println(Arrays.toString(userVector));
         for (int i = 1; i <= userVector.length-1; i++) {
             if (userVector[i] == 1) {
-                Advertisement ad = advertisementRepository.findById(Long.valueOf(i)).orElse(null);
-                if (userAdvertisementRatingRepository.existsByUserAndAdvertisement(user, ad)) {
+                Advertisement ad = advertisementRepository.findById((long) i).orElse(null);
+                if (userAdvertisementRatingRepository.existsByUserAndAdvertisement(user, ad) || Objects.requireNonNull(ad).getCreatedBy().equals(user)) {
                     continue;
                 }
                 recommendedAdvertisements.add(ad);

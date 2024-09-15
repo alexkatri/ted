@@ -6,6 +6,7 @@ import org.example.ted.models.Profile;
 import org.example.ted.models.User;
 import org.example.ted.repositories.ProfileRepository;
 import org.example.ted.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class ProfileController {
     private final ProfileRepository repository;
     private final UserRepository userRepository;
 
+    @Autowired
     ProfileController(ProfileRepository repository, UserRepository userRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
@@ -29,16 +31,9 @@ public class ProfileController {
         return repository.findAll();
     }
 
-    @PostMapping
-    Profile newProfile(@RequestBody Profile newProfile) {
-        return repository.save(newProfile);
-    }
-
     // Single item
-
     @GetMapping("{id}")
     Profile one(@PathVariable long id) {
-
         return repository.findById(id)
                 .orElseThrow(() -> new ProfileNotFoundException(id));
     }
@@ -49,6 +44,10 @@ public class ProfileController {
         return repository.findByCreatedBy(user);
     }
 
+    @PostMapping
+    Profile newProfile(@RequestBody Profile newProfile) {
+        return repository.save(newProfile);
+    }
 
     @PutMapping("{id}")
     Profile replaceProfile(@RequestBody Profile newProfile, @PathVariable long id) {

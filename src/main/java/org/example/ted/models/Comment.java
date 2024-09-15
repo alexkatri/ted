@@ -15,6 +15,9 @@ public class Comment {
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @Column(name = "text", nullable = false, columnDefinition = "TEXT")
+    private String text;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "article_id", nullable = false)
     @JsonIgnoreProperties("comments")
@@ -24,8 +27,5 @@ public class Comment {
     @JoinColumn(name = "created_by", nullable = false)
     @JsonIgnoreProperties("comments")
     private User createdBy;
-
-    @Column(name = "text", nullable = false, columnDefinition = "TEXT")
-    private String text;
 
 }

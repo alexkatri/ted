@@ -1,6 +1,7 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.AdvertisementNotFoundException;
+import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.*;
 import org.example.ted.repositories.AdvertisementRepository;
 import org.example.ted.repositories.NotificationRepository;
@@ -18,11 +19,11 @@ import java.util.Set;
 @RequestMapping("/advertisements")
 public class AdvertisementController {
 
-    private AdvertisementRepository repository;
-    private NotificationRepository notificationRepository;
-    private UserRepository userRepository;
-    private UserAdvertisementRatingRepository userAdvertisementRatingRepository;
-    private JWTGenerator JWTgenerator;
+    private final AdvertisementRepository repository;
+    private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+    private final UserAdvertisementRatingRepository userAdvertisementRatingRepository;
+    private final JWTGenerator JWTgenerator;
 
     @Autowired
     AdvertisementController(AdvertisementRepository repository, NotificationRepository notificationRepository, UserRepository userRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository, JWTGenerator jwTgenerator) {
@@ -40,9 +41,32 @@ public class AdvertisementController {
         return repository.findAll();
     }
 
+    // Single item
+
+    @GetMapping("/{id}")
+    Advertisement byId(@PathVariable long id, @RequestHeader(name = "Authorization") String token) {
+        token = token.substring(7);
+        if (!JWTgenerator.validateToken(token)) {
+            return null;
+        }
+        String user_email = JWTgenerator.getEmailFromJWT(token);
+        Optional<User> user = userRepository.findByEmail(user_email);
+        if (!user.isPresent()) {
+            return null;
+        }
+        User userEntity = user.get();
+        Advertisement advertisement = repository.findById(id).orElseThrow(()-> new AdvertisementNotFoundException(id));
+        UserAdvertisementRatingId userAdvertisementRatingId = new UserAdvertisementRatingId(userEntity.getId(), advertisement.getId());
+        if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(userEntity, advertisement)) {
+            userAdvertisementRatingRepository.save(new UserAdvertisementRating(userAdvertisementRatingId, userEntity, advertisement,
+                    1));
+        }
+        return repository.findById(id).orElseThrow(() -> new AdvertisementNotFoundException(id));
+    }
+
     @GetMapping("/user/{id}")
     List<Advertisement> allByUser(@PathVariable(value = "id") long id) {
-        User createdBy = userRepository.findById(id).get();
+        User createdBy = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
         return repository.findByCreatedBy(createdBy);
     }
 
@@ -73,37 +97,7 @@ public class AdvertisementController {
             notificationRepository.save(new Notification(advertisement.getCreatedBy(), requestedBy,
                     "advertisement request"));
         });
-        return repository.findById(id).get();
-    }
-
-    // Single item
-
-//    @GetMapping("{id}")
-//    Advertisement one(@PathVariable long id) {
-//
-//        return repository.findById(id)
-//                .orElseThrow(() -> new AdvertisementNotFoundException(id));
-//    }
-
-    @GetMapping("/{id}")
-    Advertisement byId(@PathVariable long id, @RequestHeader(name = "Authorization") String token) {
-        token = token.substring(7);
-        if (!JWTgenerator.validateToken(token)) {
-            return null;
-        }
-        String user_email = JWTgenerator.getEmailFromJWT(token);
-        Optional<User> user = userRepository.findByEmail(user_email);
-        if (!user.isPresent()) {
-            return null;
-        }
-        User userEntity = user.get();
-        Advertisement advertisement = repository.findById(id).get();
-        UserAdvertisementRatingId userAdvertisementRatingId = new UserAdvertisementRatingId(userEntity.getId(), advertisement.getId());
-        if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(userEntity, advertisement)) {
-            userAdvertisementRatingRepository.save(new UserAdvertisementRating(userAdvertisementRatingId, userEntity, advertisement,
-                    1));
-        }
-        return repository.findById(id).orElseThrow(() -> new AdvertisementNotFoundException(id));
+        return repository.findById(id).orElseThrow(()-> new AdvertisementNotFoundException(id));
     }
 
     @PutMapping("{id}")

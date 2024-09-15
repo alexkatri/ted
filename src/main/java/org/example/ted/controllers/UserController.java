@@ -1,6 +1,7 @@
 package org.example.ted.controllers;
 
 import org.example.ted.exceptions.UserNotFoundException;
+import org.example.ted.models.Role;
 import org.example.ted.models.User;
 import org.example.ted.repositories.UserRepository;
 import org.springframework.core.io.FileSystemResource;
@@ -14,8 +15,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -23,7 +26,7 @@ public class UserController {
 
     private final UserRepository repository;
 
-    private static String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
+    private static final String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
 
     UserController(UserRepository repository) {
         this.repository = repository;
@@ -37,7 +40,6 @@ public class UserController {
     }
 
     // Single item
-
     @GetMapping("{id}")
     User one(@PathVariable long id) {
         return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -55,8 +57,15 @@ public class UserController {
 
     @PostMapping
     User newUser(@RequestBody User newUser) {
+        // default profile photo
         Path path = Paths.get(UPLOAD_FOLDER + "/" + "userPhoto.jpg");
         newUser.setImagePath(path.toString());
+        // default role is USER
+        Role role = new Role();
+        role.setName("USER");
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        newUser.setRoles(roles);
         return repository.save(newUser);
     }
 
@@ -91,7 +100,6 @@ public class UserController {
 
     @PutMapping("{id}")
     User replaceUser(@RequestBody User newUser, @PathVariable long id) {
-
         return repository.findById(id)
                 .map(user -> {
                     user.setEmail(newUser.getEmail());
@@ -103,10 +111,6 @@ public class UserController {
                     return repository.save(user);
                 })
                 .orElseThrow(() -> new UserNotFoundException(id));
-//                .orElseGet(() -> {
-//                    newUser.setEmail(user_email);
-//                    return repository.save(newUser);
-//                });
     }
 
     @DeleteMapping("{id}")

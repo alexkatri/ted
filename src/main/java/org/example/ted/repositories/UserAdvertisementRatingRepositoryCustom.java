@@ -10,6 +10,6 @@ public interface UserAdvertisementRatingRepositoryCustom {
     // returns list of the advertisements visited by "user"
     List<Advertisement> getKnownAdvertisementsByUser(User user);
     // returns factorized matrix r
-    double[][] getMatrix(int K);
+    double[][] getMatrix();
     List<Advertisement> getRecommendedAdvertisementsByUser(User user);
 }

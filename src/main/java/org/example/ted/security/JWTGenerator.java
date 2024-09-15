@@ -7,7 +7,6 @@ import org.example.ted.models.User;
 import org.example.ted.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -29,6 +28,7 @@ public class JWTGenerator {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + SecurityConstants.EXPIRATION_TIME);
         User user = userRepository.findByEmail(email).orElse(null);
+        assert user != null;
         long id = user.getId();
 
         String token = Jwts.builder()

@@ -27,10 +27,10 @@ import java.util.Set;
 public class ArticleController {
 
     private final ArticleRepository repository;
-    private UserRepository userRepository;
-    private JWTGenerator JWTgenerator;
+    private final UserRepository userRepository;
+    private final JWTGenerator JWTgenerator;
 
-    private static String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
+    private static final String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
 
     ArticleController(ArticleRepository repository, UserRepository userRepository, JWTGenerator jwTgenerator) {
         this.repository = repository;
@@ -49,6 +49,39 @@ public class ArticleController {
     List<Article> allByUser(@PathVariable(value = "id") long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return repository.findByCreatedBy(user).stream().sorted().toList();
+    }
+
+    // Single item
+    @GetMapping("{id}")
+    Article one(@PathVariable long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ArticleNotFoundException(id));
+    }
+
+    // get article multimedia
+    @GetMapping("/multimedia/{id}")
+    public ResponseEntity<Resource> getArticleMultimedia(@PathVariable long id) throws IOException {
+        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        Path multimediaPath = Paths.get(article.getMultimediaPath());
+        Resource resource = new FileSystemResource(multimediaPath.toFile());
+        String contentType = Files.probeContentType(multimediaPath);
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
+    }
+
+    // get article likes
+    @GetMapping("/likes/{id}")
+    Set<Like> getLikes(@PathVariable long id) {
+
+        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        return article.getLikes();
+    }
+
+    // get article comments
+    @GetMapping("/comments/{id}")
+    Set<Comment> getComments(@PathVariable long id) {
+
+        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        return article.getComments();
     }
 
     @GetMapping("/feed")
@@ -100,39 +133,6 @@ public class ArticleController {
 
         return "Successfully uploaded " + file.getOriginalFilename();
     }
-    // Single item
-
-    @GetMapping("{id}")
-    Article one(@PathVariable long id) {
-
-        return repository.findById(id)
-                .orElseThrow(() -> new ArticleNotFoundException(id));
-    }
-
-    // get user image
-    @GetMapping("/multimedia/{id}")
-    public ResponseEntity<Resource> getArticleMultimedia(@PathVariable long id) throws IOException {
-        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
-        Path multimediaPath = Paths.get(article.getMultimediaPath());
-        Resource resource = new FileSystemResource(multimediaPath.toFile());
-        String contentType = Files.probeContentType(multimediaPath);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
-    }
-
-    @GetMapping("{id}/likes")
-    Set<Like> getLikes(@PathVariable long id) {
-
-        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
-        return article.getLikes();
-    }
-
-    @GetMapping("{id}/comments")
-    Set<Comment> getComments(@PathVariable long id) {
-
-        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
-        return article.getComments();
-    }
-
 
     @PutMapping("{id}")
     Article replaceArticle(@RequestBody Article newArticle, @PathVariable long id) {

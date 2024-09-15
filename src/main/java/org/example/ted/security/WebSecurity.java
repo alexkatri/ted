@@ -21,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class WebSecurity {
     private UserDetailsServiceImpl userDetailsService;
     private BCryptPasswordEncoder  passwordEncoder;
-    private JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Autowired
     public WebSecurity(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder passwordEncoder, JwtAuthEntryPoint jwtAuthEntryPoint) {
@@ -73,9 +73,4 @@ public class WebSecurity {
     JWTAuthenticationFilter jwtAuthenticationFilter() {
         return new JWTAuthenticationFilter();
     }
-
-//    @Bean
-//    JWTAuthorizationFilter jwtAuthorizationFilter() {
-//        return new JWTAuthorizationFilter(new authenticationManager());
-//    }
 }

@@ -28,6 +28,7 @@ public class AdvertisementRecommendation {
     private double[][] F;
     private double[][] r;
     private double h = 0.5;
+    private int K = 5;
 
     private UserRepository userRepository;
     private AdvertisementRepository advertisementRepository;
@@ -90,6 +91,13 @@ public class AdvertisementRecommendation {
         return R;
     }
 
+    public double[][] getMatrixR() {
+        if (this.R == null) {
+            this.R = factorization(K);
+        }
+        return this.R;
+    }
+
     public double[][] multiplication(double[][] V, double[][] F, int rows, int cols, int K) {
         double[][] r = new double[rows+1][cols+1];
         for (int i = 1; i <= rows; i++) {
@@ -130,11 +138,6 @@ public class AdvertisementRecommendation {
         }
         return matrix;
     }
-
-//    public double setRij(int i, int j, double value) {
-//        this.R[i][j] = value;
-//        return R[i][j];
-//    }
 
     public double[] getUserVector(double[][] R, int row) {
         double[] vector;

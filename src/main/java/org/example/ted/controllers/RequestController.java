@@ -8,6 +8,7 @@ import org.example.ted.models.User;
 import org.example.ted.repositories.NotificationRepository;
 import org.example.ted.repositories.RequestRepository;
 import org.example.ted.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class RequestController {
 
     private final RequestRepository repository;
     private final UserRepository userRepository;
-    private NotificationRepository notificationRepository;
+    private final NotificationRepository notificationRepository;
 
-    RequestController(RequestRepository repository, UserRepository userRepository) {
+    @Autowired
+    RequestController(RequestRepository repository, UserRepository userRepository, NotificationRepository notificationRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     // Aggregate root
@@ -32,25 +35,25 @@ public class RequestController {
         return repository.findAll();
     }
 
-    @PostMapping
-    Request newRequest(@RequestBody Request newRequest) {
-//        notificationRepository.save(new Notification(newRequest.getReceiver(), newRequest.getSender(), "request"));
-        return repository.save(newRequest);
-    }
-
     // Single item
-
     @GetMapping("{id}")
     Request one(@PathVariable long id) {
-
         return repository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException(id));
     }
 
+    // get user requests
     @GetMapping("/user/{receiverId}")
     List<Request> allByReceiver(@PathVariable(value = "receiverId") long receiverId) {
         User receiver = userRepository.findById(receiverId).orElseThrow(() -> new UserNotFoundException(receiverId));
         return repository.findByReceiver(receiver);
+    }
+
+    @PostMapping
+    Request newRequest(@RequestBody Request newRequest) {
+        // automatically create new notification
+        notificationRepository.save(new Notification(newRequest.getReceiver(), newRequest.getSender(), "request"));
+        return repository.save(newRequest);
     }
 
 

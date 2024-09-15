@@ -4,7 +4,6 @@ import org.example.ted.models.Request;
 import org.example.ted.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.sound.midi.Receiver;
 import java.util.List;
 
 public interface RequestRepository extends JpaRepository<Request, Long>/*, RequestRepositoryCustom*/ {

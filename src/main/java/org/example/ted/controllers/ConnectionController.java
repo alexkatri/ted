@@ -1,9 +1,12 @@
-package temp_classes;
+package org.example.ted.controllers;
 
 import org.example.ted.exceptions.ConnectionNotFoundException;
+import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.Connection;
 import org.example.ted.models.User;
 import org.example.ted.repositories.ConnectionRepository;
+import org.example.ted.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,35 +16,36 @@ import java.util.List;
 public class ConnectionController {
 
     private final ConnectionRepository repository;
+    private final UserRepository userRepository;
 
-    ConnectionController(ConnectionRepository repository) {
+    @Autowired
+    ConnectionController(ConnectionRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     // Aggregate root
-
     @GetMapping
     List<Connection> all() {
         return repository.findAll();
     }
 
-    @GetMapping("/user/{user}")
-    List<Connection> allByUser(@PathVariable(value = "user") User user) {
+    @GetMapping("/user/{id}")
+    List<Connection> allByUser(@PathVariable(value = "id") long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return repository.findByUser(user);
+    }
+
+    // Single item
+    @GetMapping("{id}")
+    Connection one(@PathVariable long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ConnectionNotFoundException(id));
     }
 
     @PostMapping
     Connection newConnection(@RequestBody Connection newConnection) {
         return repository.save(newConnection);
-    }
-
-    // Single item
-
-    @GetMapping("{id}")
-    Connection one(@PathVariable long id) {
-
-        return repository.findById(id)
-                .orElseThrow(() -> new ConnectionNotFoundException(id));
     }
 
 //    @PutMapping("{id}")

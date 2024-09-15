@@ -29,12 +29,12 @@ public class RecommendationController {
 
     @GetMapping("/advertisement")
     double[][] getUserAdvertisementMatrix() {
-        return userAdvertisementRatingRepository.getMatrix(5);
+        return userAdvertisementRatingRepository.getMatrix();
     }
 
     @GetMapping("/advertisement/user/{id}")
-    List<Advertisement> getUserRecommendedAdvertisements(@PathVariable int id) {
-        User user = userRepository.findById(id).orElse(null);
+    List<Advertisement> getUserRecommendedAdvertisements(@PathVariable long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Not Found"));
         if (user == null) {
             return null;
         }
@@ -47,36 +47,18 @@ public class RecommendationController {
     }
 
     @GetMapping("/article/user/{id}")
-    List<Article> getUserRecommendedArticles(@PathVariable int id) {
-        User user = userRepository.findById(id).orElse(null);
+    List<Article> getUserRecommendedArticles(@PathVariable long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Not Found"));
         if (user == null) {
             return null;
         }
         return userArticleRatingRepository.getRecommendedArticlesByUser(user);
     }
 
-//    @PostMapping("/initialize")
-//    void initialize() {
-//        for (User user : userRepository.findAll()) {
-//            for (Advertisement advertisement : advertisementRepository.findAll()) {
-//                UserAdvertisementRatingId userAdvertisementRatingId = new UserAdvertisementRatingId(user.getId(), advertisement.getId());
-//                userAdvertisementRatingRepository.save(new UserAdvertisementRating(userAdvertisementRatingId, user, advertisement, 0, "unknown"));
-//            }
-//        }
-//    }
-
 //    @PostMapping
 //    User newUser(@RequestBody User newUser) {
 //        return repository.save(newUser);
 //    }
-//
-//    // Single item
-//
-//    @GetMapping("{id}")
-//    User one(@PathVariable long id) {
-//        return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-//    }
-//
 //
 //    @PutMapping("{id}")
 //    User replaceUser(@RequestBody User newUser, @PathVariable long id) {

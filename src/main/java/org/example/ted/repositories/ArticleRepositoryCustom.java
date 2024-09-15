@@ -6,6 +6,5 @@ import org.example.ted.models.Article;
 import java.util.List;
 
 public interface ArticleRepositoryCustom {
-//    List<Article> findByUser(User id);
     List<Article> userFeed(int id);
 }

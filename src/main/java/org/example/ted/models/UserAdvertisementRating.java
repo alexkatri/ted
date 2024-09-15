@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.Optional;
-
 @Getter
 @Setter
 @Entity
@@ -32,24 +30,7 @@ public class UserAdvertisementRating {
     @Column(name = "value", nullable = false)
     private Integer value;
 
-    public UserAdvertisementRating(User user, Advertisement advertisement) {
-        this.user = user;
-        this.advertisement = advertisement;
-    }
-
     public UserAdvertisementRating() {
-
-    }
-
-    public UserAdvertisementRating(User user, Optional<Advertisement> byId) {
-        this.user = user;
-        this.advertisement = byId.orElse(null);
-    }
-
-    public UserAdvertisementRating(User user, Advertisement advertisement, Integer value) {
-        this.user = user;
-        this.advertisement = advertisement;
-        this.value = value;
     }
 
     public UserAdvertisementRating(UserAdvertisementRatingId userAdvertisementRatingId, User userEntity, Advertisement advertisement, int value) {

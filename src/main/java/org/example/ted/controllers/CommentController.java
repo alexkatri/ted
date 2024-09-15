@@ -36,6 +36,13 @@ public class CommentController {
         return repository.findAll();
     }
 
+    // Single item
+    @GetMapping("{id}")
+    Comment one(@PathVariable long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new CommentNotFoundException(id));
+    }
+
     @GetMapping("/user/{id}")
     List<Comment> allByUser(@PathVariable(value = "id") long id) {
         User createdBy = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -50,10 +57,11 @@ public class CommentController {
 
     @PostMapping
     Comment newComment(@RequestBody Comment newComment) {
-        notificationRepository.save(new Notification(newComment.getArticle().getCreatedBy(), newComment.getCreatedBy(), "" +
+        notificationRepository.save(new Notification(newComment.getArticle().getCreatedBy(), newComment.getCreatedBy(),
                 "comment"));
         Article article = newComment.getArticle();
         User user = newComment.getCreatedBy();
+        // update article rating
         if (!userArticleRatingRepository.existsByUserAndArticle(user, article)) {
             UserArticleRatingId userArticleRatingId = new UserArticleRatingId(user.getId(), article.getId());
             userArticleRatingRepository.save(new UserArticleRating(userArticleRatingId, user, article, 2));
@@ -66,16 +74,6 @@ public class CommentController {
         }
         return repository.save(newComment);
     }
-
-    // Single item
-
-    @GetMapping("{id}")
-    Comment one(@PathVariable long id) {
-
-        return repository.findById(id)
-                .orElseThrow(() -> new CommentNotFoundException(id));
-    }
-
 
     @PutMapping("{id}")
     Comment replaceComment(@RequestBody Comment newComment, @PathVariable long id) {
