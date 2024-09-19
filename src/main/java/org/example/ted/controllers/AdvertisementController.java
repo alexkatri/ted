@@ -64,12 +64,21 @@ public class AdvertisementController {
         return repository.findById(id).orElseThrow(() -> new AdvertisementNotFoundException(id));
     }
 
+    // get advertisements created by user
     @GetMapping("/user/{id}")
     List<Advertisement> allByUser(@PathVariable(value = "id") long id) {
         User createdBy = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
         return repository.findByCreatedBy(createdBy);
     }
 
+    // get advertisement requested users
+    @GetMapping("/{id}/requests")
+    Set<User> getAdvertisementRequests(@PathVariable(value = "id") Long id) {
+        Advertisement advertisement = repository.findById(id).orElseThrow(()-> new AdvertisementNotFoundException(id));
+        return advertisement.getRequest_users();
+    }
+
+    // show advertisements
     @GetMapping("/show")
     List<Advertisement> showAdvertisements(@RequestHeader(name = "Authorization") String token) {
         token = token.substring(7);
@@ -86,6 +95,7 @@ public class AdvertisementController {
         return repository.save(newAdvertisement);
     }
 
+    // post request by user
     @PostMapping("/{id}/requests")
     Advertisement requestAdvertisement(@PathVariable(value = "id") Long id,
                               @RequestBody User requestedBy) {

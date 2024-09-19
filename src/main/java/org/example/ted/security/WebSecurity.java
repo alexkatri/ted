@@ -19,8 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
-    private UserDetailsServiceImpl userDetailsService;
-    private BCryptPasswordEncoder  passwordEncoder;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final BCryptPasswordEncoder  passwordEncoder;
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Autowired
@@ -45,9 +45,9 @@ public class WebSecurity {
                 .authorizeHttpRequests()
                 .requestMatchers("/ted/auth/**").permitAll()
                 .requestMatchers("/recommendations/**").permitAll()
-                .requestMatchers("/users/**").permitAll()
-                .requestMatchers("/articles/multimedia_upload/**").permitAll()
-                .requestMatchers("/articles/multimedia/**").permitAll()
+                .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
+//                .requestMatchers("/articles/multimedia_upload/**").permitAll()
+//                .requestMatchers("/articles/multimedia/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
