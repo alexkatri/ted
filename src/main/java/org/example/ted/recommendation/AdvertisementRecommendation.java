@@ -11,6 +11,7 @@ import org.example.ted.repositories.UserAdvertisementRatingRepository;
 import org.example.ted.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class AdvertisementRecommendation {
     private double[][] F;
     private double[][] r;
     private double h = 0.5;
-    private int K = 5;
+    private int K = 5;  // number of features
 
     private UserRepository userRepository;
     private AdvertisementRepository advertisementRepository;
@@ -41,14 +42,11 @@ public class AdvertisementRecommendation {
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
     }
 
-    public double[][] factorization(int K) {
-
+    @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
+    public void factorization() {
+        System.out.println("advertisement factorization started");
         int rows = (int) userRepository.count();
         int cols = (int) advertisementRepository.count();
-        // no users or no items
-        if (rows == 0 || cols == 0) {
-            return null;
-        }
 
         // V , F initialization
         this.V = matrixInitialization(rows, K);
@@ -60,7 +58,7 @@ public class AdvertisementRecommendation {
         this.R = new double[rows+1][cols+1];
 
         // error computation
-        double eij = 0;
+        double eij;
         for (int i = 1; i <= rows; i++) {
             User user = userRepository.findById(i).orElse(null);
             for (int j = 1; j <= cols; j++) {
@@ -88,13 +86,10 @@ public class AdvertisementRecommendation {
                 }
             }
         }
-        return R;
+        System.out.println("advertisement factorization finished");
     }
 
     public double[][] getMatrixR() {
-        if (this.R == null) {
-            this.R = factorization(K);
-        }
         return this.R;
     }
 
@@ -140,6 +135,9 @@ public class AdvertisementRecommendation {
     }
 
     public double[] getUserVector(double[][] R, int row) {
+        if (R == null) {
+            return null;
+        }
         double[] vector;
         vector = R[row].clone();
         return vector;
@@ -150,7 +148,7 @@ public class AdvertisementRecommendation {
         double[] vector = getUserVector(R, user_id);
         for (int i = 1; i <= vector.length; i++) {
             if (vector[i] > 0) {
-                Advertisement ad = advertisementRepository.findById(Long.valueOf(i)).orElse(null);
+                Advertisement ad = advertisementRepository.findById((long) i).orElse(null);
                 // if ad not exists in viewed ads by user[user_id]
                 if (ad != null) {
                     advertisements.add(ad);

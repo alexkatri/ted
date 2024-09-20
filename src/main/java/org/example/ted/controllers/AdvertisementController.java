@@ -35,14 +35,12 @@ public class AdvertisementController {
     }
 
     // Aggregate root
-
     @GetMapping
     List<Advertisement> all() {
         return repository.findAll();
     }
 
     // Single item
-
     @GetMapping("/{id}")
     Advertisement byId(@PathVariable long id, @RequestHeader(name = "Authorization") String token) {
         token = token.substring(7);
@@ -56,6 +54,7 @@ public class AdvertisementController {
         }
         User userEntity = user.get();
         Advertisement advertisement = repository.findById(id).orElseThrow(()-> new AdvertisementNotFoundException(id));
+        // rate advertisement by user
         UserAdvertisementRatingId userAdvertisementRatingId = new UserAdvertisementRatingId(userEntity.getId(), advertisement.getId());
         if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(userEntity, advertisement)) {
             userAdvertisementRatingRepository.save(new UserAdvertisementRating(userAdvertisementRatingId, userEntity, advertisement,

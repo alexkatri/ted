@@ -50,9 +50,12 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
 
     @Override
     public List<Advertisement> getRecommendedAdvertisementsByUser(User user) {
-        double[][] R = advertisementRecommendation.getMatrixR();
         List<Advertisement> recommendedAdvertisements = new ArrayList<>();
+        double[][] R = advertisementRecommendation.getMatrixR();
         double[] userVector = advertisementRecommendation.getUserVector(R, user.getId());
+        if (userVector == null) {
+            return recommendedAdvertisements;
+        }
         for (int i = 1; i <= userVector.length-1; i++) {
             if (userVector[i] == 1) {
                 Advertisement ad = advertisementRepository.findById((long) i).orElse(null);

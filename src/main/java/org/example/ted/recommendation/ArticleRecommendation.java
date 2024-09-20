@@ -9,6 +9,7 @@ import org.example.ted.models.User;
 import org.example.ted.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ArticleRecommendation {
     private double[][] F;
     private double[][] r;
     private double h = 0.5;
-    private int K = 5;
+    private int K = 5;  // number of features
 
     private UserRepository userRepository;
     private ArticleRepository articleRepository;
@@ -39,14 +40,11 @@ public class ArticleRecommendation {
         this.userArticleRatingRepository = userArticleRatingRepository;
     }
 
-    public double[][] factorization(int K) {
-
+    @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
+    public void factorization() {
+        System.out.println("article factorization started");
         int rows = (int) userRepository.count();
         int cols = (int) articleRepository.count();
-        // no users or no items
-        if (rows == 0 || cols == 0) {
-            return null;
-        }
 
         // V , F initialization
         this.V = matrixInitialization(rows, K);
@@ -58,7 +56,7 @@ public class ArticleRecommendation {
         this.R = new double[rows+1][cols+1];
 
         // error computation
-        double eij = 0;
+        double eij;
         for (int i = 1; i <= rows; i++) {
             User user = userRepository.findById(i).orElse(null);
             for (int j = 1; j <= cols; j++) {
@@ -86,13 +84,10 @@ public class ArticleRecommendation {
                 }
             }
         }
-        return R;
+        System.out.println("article factorization finished");
     }
 
     public double[][] getMatrixR() {
-        if (this.R == null) {
-            this.R = factorization(K);
-        }
         return this.R;
     }
 
@@ -129,6 +124,9 @@ public class ArticleRecommendation {
     }
 
     public double[] getUserVector(double[][] R, int row) {
+        if (R == null) {
+            return null;
+        }
         double[] vector;
         vector = R[row].clone();
         return vector;
@@ -139,7 +137,7 @@ public class ArticleRecommendation {
         double[] vector = getUserVector(R, user_id);
         for (int i = 1; i <= vector.length; i++) {
             if (vector[i] > 0) {
-                Article ar = articleRepository.findById(Long.valueOf(i)).orElse(null);
+                Article ar = articleRepository.findById((long) i).orElse(null);
                 // if ar not exists in viewed ads by user[user_id]
                 if (ar != null) {
                     articles.add(ar);

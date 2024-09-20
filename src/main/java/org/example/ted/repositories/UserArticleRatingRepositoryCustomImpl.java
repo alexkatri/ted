@@ -36,9 +36,12 @@ public class UserArticleRatingRepositoryCustomImpl implements UserArticleRatingR
 
     @Override
     public List<Article> getRecommendedArticlesByUser(User user) {
-        double[][] R = articleRecommendation.getMatrixR();
         List<Article> recommendedArticles = new ArrayList<>();
+        double[][] R = articleRecommendation.getMatrixR();
         double[] userVector = articleRecommendation.getUserVector(R, user.getId());
+        if (userVector == null) {
+            return recommendedArticles;
+        }
         for (int i = 1; i <= userVector.length-1; i++) {
             if (userVector[i] == 1) {
                 Article ar = articleRepository.findById((long) i).orElse(null);
