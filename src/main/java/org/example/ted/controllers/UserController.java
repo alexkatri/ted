@@ -3,11 +3,16 @@ package org.example.ted.controllers;
 import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.Role;
 import org.example.ted.models.User;
+import org.example.ted.repositories.RoleRepository;
 import org.example.ted.repositories.UserRepository;
+import org.example.ted.security.JWTGenerator;
+import org.example.ted.services.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,28 +20,45 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserRepository repository;
+    private final JWTGenerator JWTgenerator;
 
     private static final String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final RoleRepository roleRepository;
 
-    UserController(UserRepository repository) {
+    @Autowired
+    UserController(UserRepository repository, JWTGenerator jwTgenerator, UserDetailsServiceImpl userDetailsServiceImpl, RoleRepository roleRepository) {
         this.repository = repository;
+        JWTgenerator = jwTgenerator;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.roleRepository = roleRepository;
     }
 
     // Aggregate root
-
     @GetMapping
-    List<User> all() {
-        return repository.findAll();
+    public ResponseEntity<List<User>> all(@RequestHeader(name = "Authorization") String token) {
+        token = token.substring(7);
+        // check token validity
+        if (!JWTgenerator.validateToken(token)) {
+            return ResponseEntity.badRequest().build();
+        }
+        String user_email = JWTgenerator.getEmailFromJWT(token);
+        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(user_email);
+        if (userDetails == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        // if user's role is ADMIN
+        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+            return ResponseEntity.ok(repository.findAll());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     // Single item
@@ -45,7 +67,7 @@ public class UserController {
         return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    // get user image
+    // get user's image
     @GetMapping("/image/{id}")
     public ResponseEntity<Resource> getUserImage(@PathVariable long id) throws IOException {
         User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -61,8 +83,7 @@ public class UserController {
         Path path = Paths.get(UPLOAD_FOLDER + "/" + "userPhoto.jpg");
         newUser.setImagePath(path.toString());
         // default role is USER
-        Role role = new Role();
-        role.setName("USER");
+        Role role = roleRepository.findByName("USER").get();
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         newUser.setRoles(roles);

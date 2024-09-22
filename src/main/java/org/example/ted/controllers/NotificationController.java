@@ -37,18 +37,20 @@ public class NotificationController {
         return repository.findById(id).orElse(null);
     }
 
-    // get user notifications
+    // get user's notifications
     @GetMapping("/user/{id}")
     List<Notification> allByReceiver(@PathVariable(value = "id") long id) {
         return repository.findByReceiverId(id);
     }
 
+    // get user's notifications from received likes
     @GetMapping("/user/{id}/likes")
     List<Like> getNotificationLikes(@PathVariable(value = "id") long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
         return repository.getNotificationLikes(user);
     }
 
+    // get user's notifications from received comments
     @GetMapping("/user/{id}/comments")
     List<Comment> getNotificationComments(@PathVariable(value = "id") long id) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
@@ -59,7 +61,6 @@ public class NotificationController {
     Notification newNotification(@RequestBody Notification newNotification) {
         return repository.save(newNotification);
     }
-
 
     @DeleteMapping("{id}")
     void deleteNotification(@PathVariable long id) {

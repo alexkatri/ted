@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 @NoArgsConstructor
@@ -57,20 +55,18 @@ public class ArticleRecommendation {
 
         // error computation
         double eij;
-        for (int i = 1; i <= rows; i++) {
-            User user = userRepository.findById(i).orElse(null);
-            for (int j = 1; j <= cols; j++) {
-                Article ar = articleRepository.findById((long) j).orElse(null);
-                if (ar == null) {
-                    R[i][j] = 0;
-                    continue;
-                }
+        for (User user : userRepository.findAll()) {
+            long userId = user.getId();
+            int i = (int) userId;   // row index
+            for (Article article : articleRepository.findAll()) {
+                long articleId = article.getId();
+                int j = (int) articleId;    // column index
                 // gain data from database for R[i][j]
-                if (!userArticleRatingRepository.existsByUserAndArticle(user, ar)) {    // user has not rated the article
+                if (!userArticleRatingRepository.existsByUserAndArticle(user, article)) {   // user has not rated the article
                     R[i][j] = r[i][j];
-                } else {    // user has visited ad
-                    R[i][j] = userArticleRatingRepository.findByUserAndArticle(user,ar).getValue();
-
+                }
+                else {    // user has rated article
+                    R[i][j] = userArticleRatingRepository.findByUserAndArticle(user,article).getValue();
                     eij = Math.abs(R[i][j] - r[i][j]);
                     int reps = 0;
                     while (eij >= 0.5 && reps++ < 5) {
@@ -130,20 +126,5 @@ public class ArticleRecommendation {
         double[] vector;
         vector = R[row].clone();
         return vector;
-    }
-
-    public List<Article> getArticles(int user_id) {
-        List<Article> articles = new ArrayList<>();
-        double[] vector = getUserVector(R, user_id);
-        for (int i = 1; i <= vector.length; i++) {
-            if (vector[i] > 0) {
-                Article ar = articleRepository.findById((long) i).orElse(null);
-                // if ar not exists in viewed ads by user[user_id]
-                if (ar != null) {
-                    articles.add(ar);
-                }
-            }
-        }
-        return articles;
     }
 }

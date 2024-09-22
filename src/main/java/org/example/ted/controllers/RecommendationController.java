@@ -25,13 +25,13 @@ public class RecommendationController {
         this.userArticleRatingRepository = userArticleRatingRepository;
     }
 
-    // Aggregate root
-
+    // get user-advertisement rating factorized matrix
     @GetMapping("/advertisement")
     double[][] getUserAdvertisementMatrix() {
         return userAdvertisementRatingRepository.getMatrix();
     }
 
+    // get user's recommended advertisements
     @GetMapping("/advertisement/user/{id}")
     List<Advertisement> getUserRecommendedAdvertisements(@PathVariable long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Not Found"));
@@ -41,11 +41,13 @@ public class RecommendationController {
         return userAdvertisementRatingRepository.getRecommendedAdvertisementsByUser(user);
     }
 
+    // get user-article rating factorized matrix
     @GetMapping("/article")
     double[][] getMatrixFactorization() {
         return userArticleRatingRepository.getMatrix();
     }
 
+    // get user's recommended articles
     @GetMapping("/article/user/{id}")
     List<Article> getUserRecommendedArticles(@PathVariable long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Not Found"));

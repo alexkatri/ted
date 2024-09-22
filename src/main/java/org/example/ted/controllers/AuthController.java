@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping("/ted/auth")
@@ -65,17 +64,27 @@ public class AuthController {
         if(!Objects.equals(registerDto.getPassword(), registerDto.getConfirmPassword())) {
             return new ResponseEntity<>("password confirmation error", HttpStatus.BAD_REQUEST);
         }
+
         User user = new User(registerDto.getEmail(), passwordEncoder.encode(registerDto.getPassword()),
                 registerDto.getName(), registerDto.getSurname(), registerDto.getPhone());
-
-        Role roles = roleRepository.findByName("USER").get();
-        user.setRoles(Collections.singleton(roles));
 
         // set user image
         Path path = Paths.get(UPLOAD_FOLDER + "/" + "userPhoto.jpg");
         user.setImagePath(path.toString());
 
-        userRepository.save(user);
+        // set user's roles
+        Set<Role> roles = new HashSet<>();
+        Role roleUser = roleRepository.findByName("USER").get();
+        roles.add(roleUser);
+
+        if (registerDto.getEmail().equals("admin")) {
+            Role roleAdmin = roleRepository.findByName("ADMIN").get();
+            roles.add(roleAdmin);
+        }
+
+        user.setRoles(roles);
+        userRepository.saveAndFlush(user);
+
         return new ResponseEntity<>("account created successfully", HttpStatus.CREATED);
     }
 }

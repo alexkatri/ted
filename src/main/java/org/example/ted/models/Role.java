@@ -7,8 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -25,11 +24,7 @@ public class Role {
     @Column(name = "name", nullable = false, length = 60)
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user"))
+    @ManyToMany(mappedBy = "roles")
     @JsonIgnoreProperties("roles")
-    private Set<User> users = new LinkedHashSet<>();
-
+    private Set<User> users = new HashSet<>();
 }

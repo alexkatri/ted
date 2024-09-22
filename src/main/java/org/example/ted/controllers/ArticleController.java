@@ -39,12 +39,12 @@ public class ArticleController {
     }
 
     // Aggregate root
-
     @GetMapping
     List<Article> all() {
         return repository.findAll().stream().sorted().toList();
     }
 
+    // get articles created by user
     @GetMapping("/user/{id}")
     List<Article> allByUser(@PathVariable(value = "id") long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -84,6 +84,7 @@ public class ArticleController {
         return article.getComments();
     }
 
+    // get user's article feed
     @GetMapping("/feed")
     List<Article> allByUserFeed(@RequestHeader(name = "Authorization") String token) {
         token = token.substring(7);
@@ -143,12 +144,11 @@ public class ArticleController {
                     article.setDate(newArticle.getDate());
                     article.setViews(newArticle.getViews());
                     article.setMultimediaPath(newArticle.getMultimediaPath());
+                    article.setLikes(newArticle.getLikes());
+                    article.setComments(newArticle.getComments());
                     return repository.save(article);
                 })
-                .orElseGet(() -> {
-                    newArticle.setId((int) id);
-                    return repository.save(newArticle);
-                });
+                .orElseThrow(() -> new ArticleNotFoundException(id));
     }
 
     @DeleteMapping("{id}")

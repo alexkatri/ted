@@ -30,7 +30,6 @@ public class LikeController {
     }
 
     // Aggregate root
-
     @GetMapping
     List<Like> all() {
         return repository.findAll();
@@ -44,12 +43,14 @@ public class LikeController {
                 .orElseThrow(() -> new LikeNotFoundException(id));
     }
 
+    // get likes created by user
     @GetMapping("/user/{id}")
     List<Like> allByUser(@PathVariable(value = "id") long id) {
         User createdBy = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return repository.findByCreatedBy(createdBy);
     }
 
+    // get article's likes
     @GetMapping("/article/{id}")
     List<Like> allByArticle(@PathVariable(value = "id") long id) {
         Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
@@ -76,7 +77,6 @@ public class LikeController {
         return repository.save(newLike);
     }
 
-
     @PutMapping("{id}")
     Like replaceLike(@RequestBody Like newLike, @PathVariable long id) {
         return repository.findById(id)
@@ -85,10 +85,7 @@ public class LikeController {
                     like.setCreatedBy(newLike.getCreatedBy());
                     return repository.save(like);
                 })
-                .orElseGet(() -> {
-                    newLike.setId((int) id);
-                    return repository.save(newLike);
-                });
+                .orElseThrow(() -> new LikeNotFoundException(id));
     }
 
     @DeleteMapping("{id}")

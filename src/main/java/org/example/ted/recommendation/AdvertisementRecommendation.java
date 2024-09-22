@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 @NoArgsConstructor
@@ -59,18 +57,17 @@ public class AdvertisementRecommendation {
 
         // error computation
         double eij;
-        for (int i = 1; i <= rows; i++) {
-            User user = userRepository.findById(i).orElse(null);
-            for (int j = 1; j <= cols; j++) {
-                Advertisement ad = advertisementRepository.findById((long) j).orElse(null);
-                if (ad == null) {
-                    R[i][j] = 0;
-                    continue;
-                }
+        for (User user : userRepository.findAll()) {
+            long userId = user.getId();
+            int i = (int) userId;
+            for (Advertisement advertisement : advertisementRepository.findAll()) {
+                long advertisementId = advertisement.getId();
+                int j = (int) advertisementId;
                 // gain data from database for R[i][j]
-                if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(user, ad)) {    // user has not visited ad
+                if (!userAdvertisementRatingRepository.existsByUserAndAdvertisement(user, advertisement)) {   // user has not rated the advertisement
                     R[i][j] = r[i][j];
-                } else {    // user has visited ad
+                }
+                else {    // user has visited advertisement
                     R[i][j] = 1;
 
                     eij = Math.abs(R[i][j] - r[i][j]);
@@ -141,20 +138,5 @@ public class AdvertisementRecommendation {
         double[] vector;
         vector = R[row].clone();
         return vector;
-    }
-
-    public List<Advertisement> getAdvertisements(int user_id) {
-        List<Advertisement> advertisements = new ArrayList<>();
-        double[] vector = getUserVector(R, user_id);
-        for (int i = 1; i <= vector.length; i++) {
-            if (vector[i] > 0) {
-                Advertisement ad = advertisementRepository.findById((long) i).orElse(null);
-                // if ad not exists in viewed ads by user[user_id]
-                if (ad != null) {
-                    advertisements.add(ad);
-                }
-            }
-        }
-        return advertisements;
     }
 }

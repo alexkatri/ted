@@ -30,7 +30,6 @@ public class CommentController {
     }
 
     // Aggregate root
-
     @GetMapping
     List<Comment> all() {
         return repository.findAll();
@@ -43,12 +42,14 @@ public class CommentController {
                 .orElseThrow(() -> new CommentNotFoundException(id));
     }
 
+    // get comments created by user
     @GetMapping("/user/{id}")
     List<Comment> allByUser(@PathVariable(value = "id") long id) {
         User createdBy = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return repository.findByCreatedBy(createdBy);
     }
 
+    // get article's comments
     @GetMapping("/article/{id}")
     List<Comment> allByArticle(@PathVariable(value = "id") long id) {
         Article article = articleRepository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
@@ -85,10 +86,7 @@ public class CommentController {
                     comment.setText(newComment.getText());
                     return repository.save(comment);
                 })
-                .orElseGet(() -> {
-                    newComment.setId((int) id);
-                    return repository.save(newComment);
-                });
+                .orElseThrow(() -> new CommentNotFoundException(id));
     }
 
     @DeleteMapping("{id}")

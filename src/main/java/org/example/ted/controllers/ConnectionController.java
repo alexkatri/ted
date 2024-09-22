@@ -30,6 +30,7 @@ public class ConnectionController {
         return repository.findAll();
     }
 
+    // get user's connections
     @GetMapping("/user/{id}")
     List<Connection> allByUser(@PathVariable(value = "id") long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));

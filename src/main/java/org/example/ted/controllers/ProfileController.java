@@ -25,7 +25,6 @@ public class ProfileController {
     }
 
     // Aggregate root
-
     @GetMapping
     List<Profile> all() {
         return repository.findAll();
@@ -38,6 +37,7 @@ public class ProfileController {
                 .orElseThrow(() -> new ProfileNotFoundException(id));
     }
 
+    // get user's profile
     @GetMapping("/user/{id}")
     Profile byUser(@PathVariable(value = "id") long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));

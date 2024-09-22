@@ -44,11 +44,8 @@ public class WebSecurity {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/ted/auth/**").permitAll()
-//                .requestMatchers("/recommendations/**").permitAll()
-                .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
-//                .requestMatchers("/articles/multimedia_upload/**").permitAll()
-//                .requestMatchers("/articles/multimedia/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/recommendations/**").permitAll()
+                .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 // this disables session creation on Spring Security

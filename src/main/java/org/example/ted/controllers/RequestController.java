@@ -29,7 +29,6 @@ public class RequestController {
     }
 
     // Aggregate root
-
     @GetMapping
     List<Request> all() {
         return repository.findAll();
@@ -42,7 +41,7 @@ public class RequestController {
                 .orElseThrow(() -> new RequestNotFoundException(id));
     }
 
-    // get user requests
+    // get user's received requests
     @GetMapping("/user/{receiverId}")
     List<Request> allByReceiver(@PathVariable(value = "receiverId") long receiverId) {
         User receiver = userRepository.findById(receiverId).orElseThrow(() -> new UserNotFoundException(receiverId));
@@ -51,29 +50,26 @@ public class RequestController {
 
     @PostMapping
     Request newRequest(@RequestBody Request newRequest) {
-        // automatically create new notification
+        // create new notification
         notificationRepository.save(new Notification(newRequest.getReceiver(), newRequest.getSender(), "request"));
         return repository.save(newRequest);
     }
 
 
-//    @PutMapping("{id}")
-//    Comment replaceComment(@RequestBody Comment newProfile, @PathVariable long id) {
-//
-//        return repository.findById(id)
-//                .map(profile -> {
-//                    profile.setCreatedBy(newProfile.getCreatedBy());
-//                    profile.setCv(newProfile.getCv());
-//                    profile.setExperience(newProfile.getExperience());
-//                    profile.setEducation(newProfile.getEducation());
-//                    profile.setSkills(newProfile.getSkills());
-//                    return repository.save(profile);
-//                })
-//                .orElseGet(() -> {
-//                    newProfile.setId((int) id);
-//                    return repository.save(newProfile);
-//                });
-//    }
+    @PutMapping("{id}")
+    Request replaceRequest(@RequestBody Request newRequest, @PathVariable long id) {
+
+        return repository.findById(id)
+                .map(request -> {
+                    request.setReceiver(newRequest.getReceiver());
+                    request.setSender(newRequest.getSender());
+                    return repository.save(request);
+                })
+                .orElseGet(() -> {
+                    newRequest.setId((int) id);
+                    return repository.save(newRequest);
+                });
+    }
 
     @DeleteMapping("{id}")
     void deleteRequest(@PathVariable long id) {
