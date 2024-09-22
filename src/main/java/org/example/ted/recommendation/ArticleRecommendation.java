@@ -38,7 +38,7 @@ public class ArticleRecommendation {
         this.userArticleRatingRepository = userArticleRatingRepository;
     }
 
-    @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
+//    @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
     public void factorization() {
         System.out.println("article factorization started");
         int rows = (int) userRepository.count();

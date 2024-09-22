@@ -40,7 +40,7 @@ public class AdvertisementRecommendation {
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
     }
 
-    @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
+//    @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
     public void factorization() {
         System.out.println("advertisement factorization started");
         int rows = (int) userRepository.count();

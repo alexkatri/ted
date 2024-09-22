@@ -4,7 +4,6 @@ import org.example.ted.exceptions.AdvertisementNotFoundException;
 import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.*;
 import org.example.ted.repositories.AdvertisementRepository;
-import org.example.ted.repositories.NotificationRepository;
 import org.example.ted.repositories.UserAdvertisementRatingRepository;
 import org.example.ted.repositories.UserRepository;
 import org.example.ted.security.JWTGenerator;
@@ -20,15 +19,13 @@ import java.util.Set;
 public class AdvertisementController {
 
     private final AdvertisementRepository repository;
-    private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final UserAdvertisementRatingRepository userAdvertisementRatingRepository;
     private final JWTGenerator JWTgenerator;
 
     @Autowired
-    AdvertisementController(AdvertisementRepository repository, NotificationRepository notificationRepository, UserRepository userRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository, JWTGenerator jwTgenerator) {
+    AdvertisementController(AdvertisementRepository repository, UserRepository userRepository, UserAdvertisementRatingRepository userAdvertisementRatingRepository, JWTGenerator jwTgenerator) {
         this.repository = repository;
-        this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
         this.userAdvertisementRatingRepository = userAdvertisementRatingRepository;
         this.JWTgenerator = jwTgenerator;
@@ -103,8 +100,6 @@ public class AdvertisementController {
             request_users.add(requestedBy);
             advertisement.setRequest_users(request_users);
             repository.save(advertisement);
-            notificationRepository.save(new Notification(advertisement.getCreatedBy(), requestedBy,
-                    "advertisement request"));
         });
         return repository.findById(id).orElseThrow(()-> new AdvertisementNotFoundException(id));
     }

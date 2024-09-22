@@ -43,22 +43,23 @@ public class UserController {
 
     // Aggregate root
     @GetMapping
-    public ResponseEntity<List<User>> all(@RequestHeader(name = "Authorization") String token) {
-        token = token.substring(7);
-        // check token validity
-        if (!JWTgenerator.validateToken(token)) {
-            return ResponseEntity.badRequest().build();
-        }
-        String user_email = JWTgenerator.getEmailFromJWT(token);
-        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(user_email);
-        if (userDetails == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        // if user's role is ADMIN
-        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
-            return ResponseEntity.ok(repository.findAll());
-        }
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<List<User>> all() {
+//        token = token.substring(7);
+//        // check token validity
+//        if (!JWTgenerator.validateToken(token)) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        String user_email = JWTgenerator.getEmailFromJWT(token);
+//        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(user_email);
+//        if (userDetails == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        // if user's role is ADMIN
+//        if (userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+//            return ResponseEntity.ok(repository.findAll());
+//        }
+//        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(repository.findAll());
     }
 
     // Single item

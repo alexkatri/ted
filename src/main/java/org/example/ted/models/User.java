@@ -45,12 +45,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties({"user", "connection_user"})
-    @JsonIgnore
     private Set<Connection> connect = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "connection_user")
     @JsonIgnoreProperties({"connection_user", "user"})
-    @JsonIgnore
     private Set<Connection> connected = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "receiver")
@@ -86,22 +84,18 @@ public class User {
 
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties({"createdBy", "request_users"})
-    @JsonIgnore
     private Set<Advertisement> advertisements = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "createdBy")
     @JsonIgnoreProperties("createdBy")
-    @JsonIgnore
     private Set<Article> articles = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "createdBy")
-    @JsonIgnoreProperties("createdBy")
-    @JsonIgnore
+    @JsonIgnoreProperties({"createdBy", "article"})
     private Set<Comment> comments = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "createdBy")
-    @JsonIgnoreProperties("createdBy")
-    @JsonIgnore
+    @JsonIgnoreProperties({"createdBy", "article"})
     private Set<Like> likes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")
@@ -118,6 +112,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties("user")
+    @JsonIgnore
     private Set<UserArticleRating> userArticleRatings = new LinkedHashSet<>();
 
     public User() {}
