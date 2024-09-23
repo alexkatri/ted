@@ -30,9 +30,6 @@ public class Article {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date date;
 
-    @Column(name = "views", nullable = false)
-    private Integer views;
-
     @Column(name = "multimedia_path", length = 1024)
     private String multimediaPath;
 

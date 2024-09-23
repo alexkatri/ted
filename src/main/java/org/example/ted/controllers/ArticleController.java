@@ -142,7 +142,6 @@ public class ArticleController {
                 .map(article -> {
                     article.setCreatedBy(newArticle.getCreatedBy());
                     article.setDate(newArticle.getDate());
-                    article.setViews(newArticle.getViews());
                     article.setMultimediaPath(newArticle.getMultimediaPath());
                     article.setLikes(newArticle.getLikes());
                     article.setComments(newArticle.getComments());

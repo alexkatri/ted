@@ -43,9 +43,10 @@ public class UserArticleRatingRepositoryCustomImpl implements UserArticleRatingR
             return recommendedArticles;
         }
         for (int i = 1; i <= userVector.length-1; i++) {
-            if (userVector[i] == 1) {
+            if (userVector[i] >= 1) {
                 Article ar = articleRepository.findById((long) i).orElse(null);
-                if (userArticleRatingRepository.existsByUserAndArticle(user, ar) || Objects.requireNonNull(ar).getCreatedBy().equals(user)) {
+                if (ar == null ||
+                        userArticleRatingRepository.existsByUserAndArticle(user, ar) || Objects.requireNonNull(ar).getCreatedBy().equals(user)) {
                     continue;
                 }
                 recommendedArticles.add(ar);

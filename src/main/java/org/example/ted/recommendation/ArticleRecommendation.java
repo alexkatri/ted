@@ -41,8 +41,8 @@ public class ArticleRecommendation {
     @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
     public void factorization() {
         System.out.println("article factorization started");
-        int rows = (int) userRepository.count();
-        int cols = (int) articleRepository.count();
+        int rows = userRepository.findMaxId();
+        int cols = articleRepository.findMaxId();
 
         // V , F initialization
         this.V = matrixInitialization(rows, K);

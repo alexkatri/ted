@@ -59,7 +59,8 @@ public class UserAdvertisementRatingRepositoryCustomImpl implements UserAdvertis
         for (int i = 1; i <= userVector.length-1; i++) {
             if (userVector[i] == 1) {
                 Advertisement ad = advertisementRepository.findById((long) i).orElse(null);
-                if (userAdvertisementRatingRepository.existsByUserAndAdvertisement(user, ad) || Objects.requireNonNull(ad).getCreatedBy().equals(user)) {
+                if (ad == null ||
+                        userAdvertisementRatingRepository.existsByUserAndAdvertisement(user, ad) || Objects.requireNonNull(ad).getCreatedBy().equals(user)) {
                     continue;
                 }
                 recommendedAdvertisements.add(ad);

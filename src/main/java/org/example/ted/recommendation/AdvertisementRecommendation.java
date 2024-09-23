@@ -43,8 +43,8 @@ public class AdvertisementRecommendation {
     @Scheduled(fixedRate = 86_400_000)  // execute with 24 hours rate
     public void factorization() {
         System.out.println("advertisement factorization started");
-        int rows = (int) userRepository.count();
-        int cols = (int) advertisementRepository.count();
+        int rows = userRepository.findMaxId();
+        int cols = advertisementRepository.findMaxId();
 
         // V , F initialization
         this.V = matrixInitialization(rows, K);
