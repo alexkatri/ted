@@ -4,6 +4,7 @@ import org.example.ted.exceptions.ArticleNotFoundException;
 import org.example.ted.exceptions.UserNotFoundException;
 import org.example.ted.models.*;
 import org.example.ted.repositories.ArticleRepository;
+import org.example.ted.repositories.UserArticleRatingRepository;
 import org.example.ted.repositories.UserRepository;
 import org.example.ted.security.JWTGenerator;
 import org.springframework.core.io.FileSystemResource;
@@ -31,11 +32,13 @@ public class ArticleController {
     private final JWTGenerator JWTgenerator;
 
     private static final String UPLOAD_FOLDER = System.getProperty("user.dir") + "/src/main/resources/temp";
+    private final UserArticleRatingRepository userArticleRatingRepository;
 
-    ArticleController(ArticleRepository repository, UserRepository userRepository, JWTGenerator jwTgenerator) {
+    ArticleController(ArticleRepository repository, UserRepository userRepository, JWTGenerator jwTgenerator, UserArticleRatingRepository userArticleRatingRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         JWTgenerator = jwTgenerator;
+        this.userArticleRatingRepository = userArticleRatingRepository;
     }
 
     // Aggregate root
@@ -53,9 +56,24 @@ public class ArticleController {
 
     // Single item
     @GetMapping("{id}")
-    Article one(@PathVariable long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ArticleNotFoundException(id));
+    Article one(@PathVariable long id, @RequestHeader(name = "Authorization") String token) {
+        token = token.substring(7);
+        if (!JWTgenerator.validateToken(token)) {
+            return null;
+        }
+        String user_email = JWTgenerator.getEmailFromJWT(token);
+        Optional<User> user = userRepository.findByEmail(user_email);
+        if (!user.isPresent()) {
+            return null;
+        }
+        User userEntity = user.get();
+        Article article = repository.findById(id).orElseThrow(() -> new ArticleNotFoundException(id));
+        // rate article by user
+        UserArticleRatingId userArticleRatingId = new UserArticleRatingId(userEntity.getId(), article.getId());
+        if(!userArticleRatingRepository.existsByUserAndArticle(userEntity, article)) {
+            userArticleRatingRepository.save(new UserArticleRating(userArticleRatingId, userEntity, article, 1));
+        }
+        return article;
     }
 
     // get article multimedia
